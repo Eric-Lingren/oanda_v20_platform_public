@@ -4,21 +4,31 @@ from setup.args import parse_args
 from strategies.price_printer import PricePrinter
 from strategies.simple_order_test import SimpleOrderTest
 from strategies.rsi_test import RsiTest
-
+from notifier.sms import TwilioSMS
 
 def run_strategy():
     print('\n***** System Initialized *****\n')
     args = parse_args()
+
+    print()
 
     systemkwargs = dict(
         token = args.token,
         account = args.account,
         practice = not args.live,
         pair = args.pair, 
-        backfill=True
+        backfill = True,
+        text_notifications = args.recipient_number is not None
+    )
+
+    twiliokwargs = dict(
+        recipient_number = args.recipient_number,
+        twilio_number = args.twilio_number,
+        twilio_sid = args.twilio_sid,
+        twilio_token = args.twilio_token
     )
     
-    oanda = Oanda(**systemkwargs)
+    oanda = Oanda(**systemkwargs, **twiliokwargs)
     # stratgey = PricePrinter(oanda)
     # stratgey = SimpleOrderTest(oanda)
     stratgey = RsiTest(oanda)

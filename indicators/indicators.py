@@ -22,7 +22,7 @@ class Indicator:
             'expression' : exp,
             'instruments' : pair,
             'timeframe' : timeframe,
-            'item_count' : 30
+            'item_count' : 3
         }
         r = requests.get(self.indicator_base_url, params=params)
         data = r.json()

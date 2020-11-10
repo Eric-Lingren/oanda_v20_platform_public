@@ -1,19 +1,21 @@
 import requests
 import json
 import time
+from notifier.sms import TwilioSMS
 
 
 class Oanda:
-    def __init__(self, token, account, practice, pair, backfill):
+    def __init__(self, token, account, practice, pair, backfill, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number):
         self.token = token
         self.account = account
         self.practice = practice
         self.pair = pair
+        self.text_notifications = text_notifications
         self.base_url = self.set_base_url(practice)
         self.headers = self.set_headers(token)
-        self.Account = Account(self.base_url, self.headers, self.account)
+        self.Account = Account(self.base_url, self.headers, self.account, self.text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number)
         self.DataFeed = DataFeed(self.headers, self.pair, backfill, self.base_url, practice, account)
-    
+
     def set_base_url(self, practice):
         if practice:
             return 'https://api-fxpractice.oanda.com'
@@ -32,12 +34,12 @@ class Oanda:
 
 
 class Account(Oanda):
-    def __init__(self, base_url, headers, account):
+    def __init__(self, base_url, headers, account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number):
         self.base_url = base_url
         self.account = account
         self.headers = headers
         self.account_info = self.get_account()
-        self.Order = Order(self.base_url, self.headers, self.account)
+        self.Order = Order(self.base_url, self.headers, self.account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number)
     
     def get_account(self):
         url = self.base_url + '/v3/accounts/' + self.account
@@ -74,12 +76,17 @@ class Account(Oanda):
 
 
 class Order(Account):
-    def __init__(self, base_url, headers, account):
+    def __init__(self, base_url, headers, account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number):
         self.base_url = base_url
         self.account = account
         self.headers = headers
+        self.text_notifications = text_notifications
+        self.twilio_sid = twilio_sid
+        self.twilio_token = twilio_token
+        self.twilio_number = twilio_number
+        self.recipient_number = recipient_number
         self.order = None
-    
+
     def get_orders(self):
         url = self.base_url + '/v3/accounts/' + self.account + '/orders'
         r = requests.get(url, headers=self.headers)
@@ -124,7 +131,10 @@ class Order(Account):
         self.order = order
         if 'orderCancelTransaction' in order:
             print('Order Transaction Canceled:')
-            print(order['orderCancelTransaction']['type'], order['orderCancelTransaction']['reason'])
+            msg = f"{order['orderCancelTransaction']['type']}, {order['orderCancelTransaction']['reason']}"
+            print(msg)
+            if self.text_notifications:
+                TwilioSMS(self.twilio_sid, self.twilio_token, self.twilio_number, self.recipient_number).send_text(msg)
         print('\n')
         if 'orderFillTransaction' in order:
             time = order["orderFillTransaction"]["time"]
@@ -136,6 +146,9 @@ class Order(Account):
             pl = order["orderFillTransaction"]["pl"]
             msg = f'*** ORDER FUFILLED ***\nTime: {time}\nType: {reason}\nOrder Id: {orderID}\nInstrument: {instrument}\nUnits: {units}\nPrice: {price}\nP/L: ${pl}'
             print(msg)
+            if self.text_notifications:
+                TwilioSMS(self.twilio_sid, self.twilio_token, self.twilio_number, self.recipient_number).send_text(msg)
+
 
     def close_trade(self, order_id):
         url = self.base_url + '/v3/accounts/' + self.account + '/trades/' + order_id + '/close'

@@ -29,6 +29,24 @@ def parse_args(pargs=None):
     parser.add_argument('--token', default=None,
                         required=True, action='store',
                         help='Access token to use')
+    
+    parser.add_argument('--twilio-number', default=None,
+                        required=False, action='store',
+                        help='Twilio number to send mesages from')
+    
+        
+    parser.add_argument('--recipient-number', default=None,
+                        required=False, action='store',
+                        help='Number to send mesages to')
+    
+    parser.add_argument('--twilio-sid', default=None,
+                        required=False, action='store',
+                        help='Twilio account')
+    
+    parser.add_argument('--twilio-token', default=None,
+                        required=False, action='store',
+                        help='Twilio auth account')
+
 
     if pargs is not None:
         return parser.parse_args(pargs)
