@@ -1,2 +1,3 @@
-./setup/__config__.py
+/__config__.py
+/setup
 /.DS_Store
