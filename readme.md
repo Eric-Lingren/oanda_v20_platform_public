@@ -1,5 +1,6 @@
-To run the platform in terminal enter:
-    python3 main.py --account xxx-xxx-xxxxxxx-xxx --token xxxxxxxxxxx-xxxxxxxxxxxxxxx --pair EUR_USD
+To run the platform in terminal enter:   
+
+```python3 main.py --account xxx-xxx-xxxxxxx-xxx --token xxxxxxxxxxx-xxxxxxxxxxxxxxx --pair EUR_USD```
 
 #### Some example method calls for reference:
     # print(oanda.Account.get_account())
