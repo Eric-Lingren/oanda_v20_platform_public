@@ -7,10 +7,7 @@ from strategies.rsi_test import RsiTest
 from notifier.sms import TwilioSMS
 
 def run_strategy():
-    print('\n***** System Initialized *****\n')
     args = parse_args()
-
-    print()
 
     systemkwargs = dict(
         token = args.token,
@@ -40,7 +37,7 @@ def run_strategy():
         if first_data_object != updated_first_data_object:
             stratgey.__next__()
 
-    schedule.every(10).seconds.do(job)
+    schedule.every(30).seconds.do(job)
 
     while True:
         schedule.run_pending()

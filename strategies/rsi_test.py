@@ -1,33 +1,40 @@
+import datetime
 from oanda.oanda import Oanda
 from indicators.indicators import Indicator
-import datetime
+from notifier.system_logger import config_logger
+
 
 class RsiTest(Oanda):
     def __init__(self, oanda):
         print('-------- RSI Test Stratgey Initialized -----------')
         self.data0 = oanda.DataFeed.data0
         self.oanda = oanda
+        self.global_logger = config_logger()
         self.pair = oanda.pair
         self.profit_target = 5
         self.loss_target = -5
         self.set_indicators()
-
+        self.global_logger.info('-------- RSI Test Stratgey Initialized -----------')
 
     def set_indicators(self):
-        self.sma = Indicator().sma(self.data0, period=14, ba='bid', ohlc='c')
+        # self.sma = Indicator().sma(self.data0, period=14, ba='bid', ohlc='c')
         self.rsi = Indicator().rsi(ohlc='close', period=14, pair=self.pair, timeframe='minute', )
 
     
     def log(self, txt, dt=None):
         dt = dt or self.data0[0]['time']
-        print(f'{dt} {txt}')
+        # print(f'{dt} GMT {txt}')
+        self.global_logger.info(f'{dt} {txt}')
 
 
     def __next__(self):
         self.set_indicators()
-        print('\n--------------- NEXT RAN ---------------\n')
+        # print('\n--------------- NEXT RAN ---------------\n')
+        self.log('\n--------------- NEXT RAN ---------------')
         self.log(f" BID Close Price: {self.data0[0]['bid']['c']}")
         self.log(f" NEW RSI: {self.rsi[0]}")
+        # self.global_logger.info('heres a log test form system')
+        # logger.info(f'testing log info')
 
         bid0 = self.data0[0]['bid']['c']
         bid1 = self.data0[1]['bid']['c']
@@ -38,18 +45,18 @@ class RsiTest(Oanda):
 
         if len(matching_trades) == 0:  # No Existing Position. Evaluate Entry Criteria
             if self.rsi[0] <= 30:
-                print("RSI is less than 30")
+                # print("RSI is less than 30")
                 if (bid2 > bid1) and (bid1 > bid0):
-                    print('prices are trending down')
+                    # print('prices are trending down')
                     self.oanda.Account.Order.buy_market(5000, self.pair)
             if self.rsi[0] >= 70:
-                print("RSI is greater than than 70")
+                # print("RSI is greater than than 70")
                 if (bid2 < bid1) and (bid1 < bid0):
-                    print('prices are trending up')
+                    # print('prices are trending up')
                     self.oanda.Account.Order.sell_market(5000, self.pair)
         else:  # Position Exists.  Evaluate Exit Criteria.
             position_value = float(matching_trades[0]['unrealizedPL'])
-            print(f'Checking profit : {position_value}')
+            self.log(f'Checking profit : {position_value}')
             if position_value >= self.profit_target or position_value <= self.loss_target:
                 order_id = matching_trades[0]['id']
                 self.oanda.Account.Order.close_trade(order_id)

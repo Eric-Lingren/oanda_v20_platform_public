@@ -2,6 +2,7 @@ import requests
 import json
 import time
 from notifier.sms import TwilioSMS
+from notifier.system_logger import config_logger
 
 
 class Oanda:
@@ -11,10 +12,11 @@ class Oanda:
         self.practice = practice
         self.pair = pair
         self.text_notifications = text_notifications
+        self.global_logger = config_logger()
         self.base_url = self.set_base_url(practice)
         self.headers = self.set_headers(token)
-        self.Account = Account(self.base_url, self.headers, self.account, self.text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number)
-        self.DataFeed = DataFeed(self.headers, self.pair, backfill, self.base_url, practice, account)
+        self.Account = Account(self.base_url, self.headers, self.account, self.text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number, self.global_logger)
+        self.DataFeed = DataFeed(self.headers, self.pair, backfill, self.base_url, practice, account, self.global_logger)
 
     def set_base_url(self, practice):
         if practice:
@@ -34,18 +36,24 @@ class Oanda:
 
 
 class Account(Oanda):
-    def __init__(self, base_url, headers, account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number):
+    def __init__(self, base_url, headers, account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number, global_logger):
+        self.global_logger = global_logger
         self.base_url = base_url
         self.account = account
         self.headers = headers
         self.account_info = self.get_account()
-        self.Order = Order(self.base_url, self.headers, self.account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number)
+        self.Order = Order(self.base_url, self.headers, self.account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number, global_logger)
     
     def get_account(self):
-        url = self.base_url + '/v3/accounts/' + self.account
-        r = requests.get(url, headers=self.headers)
-        data = r.json()
-        return data
+        try:
+            url = self.base_url + '/v3/accounts/' + self.account
+            r = requests.get(url, headers=self.headers)
+            data = r.json()
+            if data['errorMessage']:
+                self.global_logger.error(f"OANDA API ERROR - {data['errorMessage']}")
+            return data
+        except:
+            pass
 
     def get_account_balance(self):
         data = self.get_account()
@@ -53,16 +61,27 @@ class Account(Oanda):
         return balance
 
     def get_open_positions(self):
-        url = self.base_url + '/v3/accounts/' + self.account + '/openPositions'
-        r = requests.get(url, headers=self.headers)
-        data = r.json()
-        return data
+        try:
+            url = self.base_url + '/v3/accounts/' + self.account + '/openPositions'
+            r = requests.get(url, headers=self.headers)
+            data = r.json()
+            if data['errorMessage']:
+                self.global_logger.error(f"OANDA API ERROR - {data['errorMessage']}")
+            return data
+        except:
+            pass
 
     def get_open_trades(self):
-        url = self.base_url + '/v3/accounts/' + self.account + '/openTrades'
-        r = requests.get(url, headers=self.headers)
-        data = r.json()
-        return data
+        try:
+            url = self.base_url + '/v3/accounts/' + self.account + '/openTrades'
+            r = requests.get(url, headers=self.headers)
+            data = r.json()
+            # if data['errorMessage']:
+            #     print('error')
+            #     self.global_logger.error(f"OANDA API ERROR - {data['errorMessage']}")
+            return data
+        except:
+            pass
 
     def find_matching_trades(self, open_trades, pair):
         new_list = []
@@ -76,7 +95,7 @@ class Account(Oanda):
 
 
 class Order(Account):
-    def __init__(self, base_url, headers, account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number):
+    def __init__(self, base_url, headers, account, text_notifications, twilio_sid, twilio_token, twilio_number, recipient_number, global_logger):
         self.base_url = base_url
         self.account = account
         self.headers = headers
@@ -86,46 +105,59 @@ class Order(Account):
         self.twilio_number = twilio_number
         self.recipient_number = recipient_number
         self.order = None
+        self.global_logger = global_logger
 
     def get_orders(self):
-        url = self.base_url + '/v3/accounts/' + self.account + '/orders'
-        r = requests.get(url, headers=self.headers)
-        data = r.json()
-        return data
+        try:
+            url = self.base_url + '/v3/accounts/' + self.account + '/orders'
+            r = requests.get(url, headers=self.headers)
+            data = r.json()
+            return data
+        except:
+            pass
 
     def get_pending_orders(self):
-        url = self.base_url + '/v3/accounts/' + self.account + '/pendingOrders'
-        r = requests.get(url, headers=self.headers)
-        data = r.json()
-        return data
+        try:
+            url = self.base_url + '/v3/accounts/' + self.account + '/pendingOrders'
+            r = requests.get(url, headers=self.headers)
+            data = r.json()
+            return data
+        except: 
+            pass
 
     def buy_market(self, units, instrument):
-        url = self.base_url + '/v3/accounts/' + self.account + '/orders'
-        data = {
-            "order": {
-                "units": units,
-                "instrument": instrument,
-                "timeInForce": "FOK",
-                "type": "MARKET",
-                "positionFill": "DEFAULT"
+        try:
+            url = self.base_url + '/v3/accounts/' + self.account + '/orders'
+            data = {
+                "order": {
+                    "units": units,
+                    "instrument": instrument,
+                    "timeInForce": "FOK",
+                    "type": "MARKET",
+                    "positionFill": "DEFAULT"
+                }
             }
-        }
-        r = requests.post(url, headers=self.headers, json=data)
-        self.notify_order(r.json())
+            r = requests.post(url, headers=self.headers, json=data)
+            self.notify_order(r.json())
+        except:
+            pass
 
     def sell_market(self, units, instrument):
-        url = self.base_url + '/v3/accounts/' + self.account + '/orders'
-        data = {
-            "order": {
-                "units": -units,
-                "instrument": instrument,
-                "timeInForce": "FOK",
-                "type": "MARKET",
-                "positionFill": "DEFAULT"
+        try:
+            url = self.base_url + '/v3/accounts/' + self.account + '/orders'
+            data = {
+                "order": {
+                    "units": -units,
+                    "instrument": instrument,
+                    "timeInForce": "FOK",
+                    "type": "MARKET",
+                    "positionFill": "DEFAULT"
+                }
             }
-        }
-        r = requests.post(url, headers=self.headers, json=data)
-        self.notify_order(r.json())
+            r = requests.post(url, headers=self.headers, json=data)
+            self.notify_order(r.json())
+        except:
+            pass
 
     def notify_order(self, order):
         self.order = order
@@ -135,6 +167,7 @@ class Order(Account):
             print(msg)
             if self.text_notifications:
                 TwilioSMS(self.twilio_sid, self.twilio_token, self.twilio_number, self.recipient_number).send_text(msg)
+            self.global_logger.error(f"OANDA ORDER ERROR - {msg}")
         print('\n')
         if 'orderFillTransaction' in order:
             time = order["orderFillTransaction"]["time"]
@@ -148,35 +181,44 @@ class Order(Account):
             print(msg)
             if self.text_notifications:
                 TwilioSMS(self.twilio_sid, self.twilio_token, self.twilio_number, self.recipient_number).send_text(msg)
+            self.global_logger.info(f"OANDA ORDER SUCCESSFUL - {msg}")
 
 
     def close_trade(self, order_id):
-        url = self.base_url + '/v3/accounts/' + self.account + '/trades/' + order_id + '/close'
-        r = requests.put(url, headers=self.headers)
-        self.notify_order(r.json())
-
+        try:
+            url = self.base_url + '/v3/accounts/' + self.account + '/trades/' + order_id + '/close'
+            r = requests.put(url, headers=self.headers)
+            self.notify_order(r.json())
+        except:
+            pass
 
 
 
 class DataFeed(Oanda):
-    def __init__(self, headers, pair, backfill, base_url, practice, account):
+    def __init__(self, headers, pair, backfill, base_url, practice, account, global_logger):
         self.headers = headers
         self.pair = pair
         self.base_url = base_url
         self.account = account
+        # self.global_logger = global_logger
         self.data0 = self.set_init_data0(backfill)
         self.stream_url = self.set_stream_url(practice)
     
     def set_init_data0(self, backfill):
-        params = { 'granularity': 'M1', 'count': 1, 'price' : 'BA' }
-        if backfill:
-            params['count'] = 500
-        url = self.base_url + '/v3/instruments/' + self.pair + '/candles?'
-        r = requests.get(url, headers=self.headers, params=params)
-        data = r.json()
-        bars = data['candles'][::-1]
-        return bars
-    
+        try:
+            params = { 'granularity': 'M1', 'count': 1, 'price' : 'BA' }
+            if backfill:
+                params['count'] = 500
+            url = self.base_url + '/v3/instruments/' + self.pair + '/candles?'
+            r = requests.get(url, headers=self.headers, params=params)
+            data = r.json()
+            # if data['errorMessage']:
+            #     self.global_logger.error(f"OANDA DATA ERROR - {data['errorMessage']}")
+            bars = data['candles'][::-1]
+            return bars
+        except:
+            pass
+
     def rebuild_data(self, latest_bar):
         latest_bar_time = latest_bar['time']
         last_bar_time = self.data0[0]['time']
@@ -186,12 +228,17 @@ class DataFeed(Oanda):
                 self.data0.pop()
 
     def refresh_data(self):
-        url = self.base_url + '/v3/instruments/' + self.pair + '/candles?count=1&price=BA'
-        params = { 'granularity': 'M1' }
-        r = requests.get(url, headers=self.headers, params=params)
-        data = r.json()
-        latest_bar = data['candles'][::-1][0]
-        self.rebuild_data(latest_bar)
+        try:
+            url = self.base_url + '/v3/instruments/' + self.pair + '/candles?count=1&price=BA'
+            params = { 'granularity': 'M1' }
+            r = requests.get(url, headers=self.headers, params=params)
+            data = r.json()
+            # if data['errorMessage']:
+            #         self.global_logger.error(f"OANDA DATA ERROR - {data['errorMessage']}")
+            latest_bar = data['candles'][::-1][0]
+            self.rebuild_data(latest_bar)
+        except:
+            pass
     
     def set_stream_url(self, practice): # Does Work, Not currently used.
         if practice:
