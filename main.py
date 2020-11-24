@@ -4,6 +4,7 @@ from setup.args import parse_args
 from strategies.price_printer import PricePrinter
 from strategies.simple_order_test import SimpleOrderTest
 from strategies.rsi_test import RsiTest
+from strategies.rsi_trending_prices import Rsi1MinTrendingPrices
 from notifier.sms import TwilioSMS
 
 def run_strategy():
@@ -28,7 +29,7 @@ def run_strategy():
     oanda = Oanda(**systemkwargs, **twiliokwargs)
     # stratgey = PricePrinter(oanda)
     # stratgey = SimpleOrderTest(oanda)
-    stratgey = RsiTest(oanda)
+    stratgey = Rsi1MinTrendingPrices(oanda)
 
     def job():
         first_data_object = oanda.DataFeed.data0[0]
