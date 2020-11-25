@@ -43,10 +43,10 @@ class Rsi1MinTrendingPrices(Oanda):
         if len(matching_trades) == 0:  # No Existing Position. Evaluate Entry Criteria
             if self.rsi[0] < 30:
                 if (bid2 >= bid1) and (bid1 >= bid0):
-                    self.oanda.Account.Order.buy_market(5000, self.pair)
+                    self.oanda.Account.Order.buy_market(10000, self.pair)
             if self.rsi[0] > 70:
                 if (bid2 <= bid1) and (bid1 <= bid0):
-                    self.oanda.Account.Order.sell_market(5000, self.pair)
+                    self.oanda.Account.Order.sell_market(10000, self.pair)
         else:  # Position Exists.  Evaluate Exit Criteria.
             position_value = float(matching_trades[0]['unrealizedPL'])
             self.log(f'Checking profit : {position_value}')
