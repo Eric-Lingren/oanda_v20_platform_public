@@ -52,7 +52,7 @@ def run_strategy():
 
     # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATGEY): 
     def job():
-        # check_sys_usage()   # For localhost testing - DigitalOcean does this natively
+        # check_sys_usage()   # For localhost hardware performance testing - DigitalOcean does this natively
         first_data_object = oanda.DataFeed.data0[0]
         oanda.DataFeed.refresh_data()
         updated_first_data_object = oanda.DataFeed.data0[0]
