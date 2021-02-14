@@ -6,16 +6,16 @@ To run the platform in terminal enter:
 Setup --
 
 Dependencies: 
-wheel
-twilio 
-schedule
-datetime
-requests
-json
-time
-argparse
-numpy
-tulipy
+wheel   
+twilio   
+schedule   
+datetime   
+requests   
+json   
+time   
+argparse   
+numpy   
+tulipy   
 
 
 Install Dependencies: 
@@ -33,3 +33,10 @@ sudo pip3 install wheel twilio schedule datetime requests argparse numpy tulipy
     # oanda.Account.Order.sell_market(150, 'EUR_USD')
     # print(oanda.Account.get_open_positions())
     # oanda.DataFeed.stream()
+
+
+# Check Running processes:
+   ps -ef | egrep "python|PID"
+
+# Kill Running Processes: 
+    kill -9 <pid>
