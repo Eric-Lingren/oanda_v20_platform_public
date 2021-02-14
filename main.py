@@ -1,4 +1,5 @@
 import schedule
+import time
 from oanda.oanda import Oanda
 from setup.args import parse_args
 from strategies.price_printer import PricePrinter
@@ -6,6 +7,8 @@ from strategies.simple_order_test import SimpleOrderTest
 from strategies.rsi_test import RsiTest
 from strategies.rsi_trending_prices import Rsi1MinTrendingPrices
 from notifier.sms import TwilioSMS
+from utils.hardware_usage import check_sys_usage
+
 
 def run_strategy():
     args = parse_args()
@@ -32,6 +35,7 @@ def run_strategy():
     stratgey = Rsi1MinTrendingPrices(oanda)
 
     def job():
+        # check_sys_usage()
         first_data_object = oanda.DataFeed.data0[0]
         oanda.DataFeed.refresh_data()
         updated_first_data_object = oanda.DataFeed.data0[0]
@@ -42,7 +46,7 @@ def run_strategy():
 
     while True:
         schedule.run_pending()
-
+        time.sleep(1)
 
 if __name__ == '__main__':
     run_strategy()
