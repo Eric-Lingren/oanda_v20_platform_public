@@ -13,6 +13,7 @@ from utils.hardware_usage import check_sys_usage
 def run_strategy():
     args = parse_args()
 
+    # SETS UP BROKER CONFIGURATIONS:
     systemkwargs = dict(
         token = args.token,
         account = args.account,
@@ -22,6 +23,8 @@ def run_strategy():
         text_notifications = args.recipient_number is not None
     )
 
+
+    # SETS UP SMS NOTIFIER CONFIGURATIONS:
     twiliokwargs = dict(
         recipient_number = args.recipient_number,
         twilio_number = args.twilio_number,
@@ -29,21 +32,31 @@ def run_strategy():
         twilio_token = args.twilio_token
     )
     
+    # PREPARES BROKER FOR USAGE:
     oanda = Oanda(**systemkwargs, **twiliokwargs)
+
+
+    # SETS THE STRATGEY TO RUN:
+    stratgey = Rsi1MinTrendingPrices(oanda)
     # stratgey = PricePrinter(oanda)
     # stratgey = SimpleOrderTest(oanda)
-    stratgey = Rsi1MinTrendingPrices(oanda)
+    
 
+    # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATGEY): 
     def job():
-        # check_sys_usage()
+        # check_sys_usage()   # For localhost testing - DigitalOcean does this natively
         first_data_object = oanda.DataFeed.data0[0]
         oanda.DataFeed.refresh_data()
         updated_first_data_object = oanda.DataFeed.data0[0]
         if first_data_object != updated_first_data_object:
             stratgey.__next__()
 
+
+    # SETS SCHEDULER TO FETCH NEW DATA AND RUN STRATGEY INTERVALS:
     schedule.every(30).seconds.do(job)
 
+
+    # KEEPS THE SYSTEM ONLINE INDEFINATELY WHILE MINIMIZING RESOURCE CONSUMPTION:
     while True:
         schedule.run_pending()
         time.sleep(1)
