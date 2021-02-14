@@ -62,13 +62,14 @@ def run_strategy():
 
 
     # SETS SCHEDULER TO FETCH NEW DATA AND RUN STRATGEY INTERVALS:
-    schedule.every(30).seconds.do(job)
+    # schedule.every(30).seconds.do(job)
+    schedule.every(5).seconds.do(job) # For testing server overloading
 
 
     # KEEPS THE SYSTEM ONLINE INDEFINATELY WHILE MINIMIZING RESOURCE CONSUMPTION:
     while True:
         schedule.run_pending()
-        time.sleep(1)
+        # time.sleep(1) # Remove for testing server overloading
 
 
 # INITIALIZES ROBOT AND SCRIPTS 
