@@ -1,17 +1,22 @@
-import schedule
+import os
+import sys
 import time
+import schedule
+import importlib
+import subprocess
 from oanda.oanda import Oanda
 from setup.args import parse_args
-from strategies.price_printer import PricePrinter
-from strategies.simple_order_test import SimpleOrderTest
-from strategies.rsi_test import RsiTest
-from strategies.rsi_trending_prices import Rsi1MinTrendingPrices
 from notifier.sms import TwilioSMS
 from utils.hardware_usage import check_sys_usage
+
+# SETS THE STRATEGIES FOLDER AVAILBLE FOR USE BY PYTHON TO PULL ALL BOT SCRIPTS IN DYNAMICALLY
+sys.path.append(os.getcwd() + '/strategies/forex_bots_python')
+
 
 
 def run_strategy():
     args = parse_args()
+
 
     # SETS UP BROKER CONFIGURATIONS:
     systemkwargs = dict(
@@ -32,14 +37,17 @@ def run_strategy():
         twilio_token = args.twilio_token
     )
     
+
     # PREPARES BROKER FOR USAGE:
     oanda = Oanda(**systemkwargs, **twiliokwargs)
 
 
-    # SETS THE STRATGEY TO RUN:
-    stratgey = Rsi1MinTrendingPrices(oanda)
-    # stratgey = PricePrinter(oanda)
-    # stratgey = SimpleOrderTest(oanda)
+    # IMPORTS THE TRADING STRATGEY DYNAMICALLY BASED UPON THE ROBOT FILE NAME PASSED IN THE ARGS
+    bot_system = getattr(importlib.import_module(args.bot), args.bot)
+
+
+    # SETS THE BOT TRADING STRATGEY TO RUN WITH OANDA:
+    stratgey = bot_system(oanda)
     
 
     # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATGEY): 
@@ -60,6 +68,7 @@ def run_strategy():
     while True:
         schedule.run_pending()
         time.sleep(1)
+
 
 if __name__ == '__main__':
     run_strategy()

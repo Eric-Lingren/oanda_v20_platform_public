@@ -39,6 +39,10 @@ def parse_args(pargs=None):
                         required=False, action='store',
                         help='Number to send mesages to')
     
+    parser.add_argument('--bot', default=None,
+                        required=True, action='store',
+                        help='System bot to trade')
+    
     parser.add_argument('--twilio-sid', default=None,
                         required=False, action='store',
                         help='Twilio account')

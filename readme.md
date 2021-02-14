@@ -16,11 +16,12 @@ time
 argparse   
 numpy   
 tulipy   
+psutil    
 
 
 Install Dependencies: 
 
-sudo pip3 install wheel twilio schedule datetime requests argparse numpy tulipy
+sudo pip3 install wheel twilio schedule datetime requests argparse numpy tulipy psutil
 
 #### Some example method calls for reference:
     # print(oanda.Account.get_account())
