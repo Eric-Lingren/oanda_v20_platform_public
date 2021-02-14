@@ -3,7 +3,6 @@ from oanda.oanda import Oanda
 from indicators.indicators import Indicator
 from notifier.system_logger import config_logger
 
-
 class rsi_1min_trending_prices(Oanda):
     def __init__(self, oanda):
         print('-------- RSI 1Min Trending Prices Stratgey Initialized -----------')
