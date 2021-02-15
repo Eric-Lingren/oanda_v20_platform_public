@@ -68,7 +68,7 @@ def run_strategy():
     # KEEPS THE SYSTEM ONLINE INDEFINATELY WHILE MINIMIZING RESOURCE CONSUMPTION:
     while True:
         schedule.run_pending()
-        # time.sleep(1) # Remove for testing server overloading
+        # time.sleep(1) # Remove if you want to test server overloading
 
 
 # INITIALIZES ROBOT AND SCRIPTS 
@@ -90,12 +90,14 @@ try:
 
 # GRACEFUL EXIT ON PROGRAM CRASH WITH EMAIL NOTIFICATION OF FAILURE REASON
 except Exception as e:
+    print(e)
     args = parse_args()
     log_stream = StringIO()
     logging.basicConfig(stream=log_stream, level=logging.INFO)
     logging.error("Exception occurred", exc_info=True)
     email_subject = f'Python Bot CRASHED! --- {args.pair} --- {args.bot}'
-    email_body = log_stream.getvalue()
+    # email_body = log_stream.getvalue()
+    email_body = e
     send_email_notification(
         args.gmail_server_account, 
         args.gmail_server_password, 
