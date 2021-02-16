@@ -20,7 +20,7 @@ If you would like more information about the Oanda API architecture used within 
 
 To run the platform in terminal on localhost you can start it up with the following script from the root of the project making sure you substitute varibles for your own:   
 
-```python3 main.py --oanda_account <account-number> --oanda_token <oanda-api-token> --pair <currency-apir> --bot <bot-name>```   
+```python3 main.py --oanda_account <account-number> --oanda_token <oanda-api-token> --pair <currency-pair> --bot <bot-name>```   
 
 The arguments listed above are all required for operation but there are optional ones available also for email and sms notifications.  To view the full list of all arguments the python script will accept, you can check the args.py file contained within the setup folder [here](./setup/args.py)   
 
