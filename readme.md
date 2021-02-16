@@ -12,7 +12,7 @@ This is intended to run in a live environment in real time.  If you would like t
 
 You can run this locally or on a deployed linux server.  If you wish to use my server deployement library that works in conjunction with this Oanda platform, [you can view that repo here.](https://github.com/Eric-Lingren/oanda_server_scripts)    
 
-As part of the functionality and high availability intended for trading ecosystems, this platform includes automated email notifications autosent for each up and down occourance of the platform.  If you wish to disable this, you will need to clone the code and disable those features.  This also means you will need to configure your a gmail acocunt to use an application password to use for the email sending options if you keep those enabled. There are optional Twilio SMS notifications you can configure as well.
+As part of the functionality and high availability intended for trading ecosystems, this platform includes automated email notifications autosent for each up and down occourance of the platform.  If you wish to disable this, you will need to clone the code and disable those features.  This also means you will need to configure a gmail account to use an application password to use for the email sending options if you keep those enabled. There are optional Twilio SMS notifications you can configure as well.
 
 If you would like more information about the Oanda API architecture used within this repo or have more questions on obtaining your Oanda tokens and credentials, you can view the full Oanda v20 developer documentation [here](https://developer.oanda.com/rest-live-v20/introduction/)
 
