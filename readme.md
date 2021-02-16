@@ -14,7 +14,7 @@ You can run this locally or on a deployed linux server.  If you wish to use my s
 
 As part of the functionality and high availability intended for trading ecosystems, this platform includes automated email notifications autosent for each up and down occourance of the platform.  If you wish to dsiable this, you will need to clone the code and disable those features.  This also means you will need to configure your a gmail acocunt to use an application password to use for the email sending options. There are optional Twilio SMS notifications you can configure as well.
 
-If you would like more information aobut the Oanda API architecture used within this repo or have more questions on obtaining your Oanda tokens and credentials, you can view the full Oanda v20 developer documentation [here](https://developer.oanda.com/rest-live-v20/introduction/)
+If you would like more information about the Oanda API architecture used within this repo or have more questions on obtaining your Oanda tokens and credentials, you can view the full Oanda v20 developer documentation [here](https://developer.oanda.com/rest-live-v20/introduction/)
 
 ## Usage:
 
@@ -48,16 +48,18 @@ To Install Dependencies:
 
 ## Included Robots:
 
-This is a sample repo. As such, everything is fully functional, but this contains no profitable robot algorithms.  You can view the included robot algorithms in the strategies/forex_bots_python folder [here.](./strategies/forex_python_bots) 
+This is a sample repo. As such, everything is fully functional, but this contains no profitable robot algorithms.  You can view the included robot algorithms in the strategies/forex_bots_python folder [here.](https://github.com/Eric-Lingren/oanda_v20_platform_public/tree/master/strategies/forex_bots_python) 
 
 Included is a simple price printer, a basic order execution bot, and a simple RSI execution bot.   
 
 Feel free to use this as a platform for your own usage and development of your own robots or contact me if you have ideas of things you would like to see built.   
+
+**None of these bots are profitable! They are for demonstration purposes only. I will not be responsible if you run them on a live account.**
 ## Tips:
 
 ### Indicators:
 
-All indicators are custom built. If you need more than those included, you will need to build your own into the framweork.
+All indicators are custom built. If you need more than those included, you will need to build your own into the framework.
 ### Here are some example method calls for reference:
     # print(oanda.Account.get_account())
     # print(oanda.Account.get_account_balance())
@@ -71,7 +73,7 @@ All indicators are custom built. If you need more than those included, you will 
     # oanda.DataFeed.stream()
 ### Check All Running Script Processes on a Linux Server:
 ``` ps -ef | egrep "python|PID" ```   
-``` ps -u eric | egrep "python|PID" ```
+``` ps -u {user} | egrep "python|PID" ```
 
 ### Kill Running Script Processes on a Linux Server: 
 ``` kill -9 <pid> ```
