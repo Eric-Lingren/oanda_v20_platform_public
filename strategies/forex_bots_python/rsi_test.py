@@ -1,10 +1,24 @@
+#################################################################################################################
+#                                                                                                               #
+#    This system DOES execute trades. This combines the price_printer and simple_order_test strategies.         #
+#    This algo demonstrates how to use the backtrader platfom in conjunction with the Oanda API to build a      #
+#    custom trading robot that executes trades successfully based upon RSI indicator data combined with         #
+#    with three bars of trending prices.                                                                        #
+#                                                                                                               #
+#          ********************************    WARNING!!!    ********************************                   #
+#       DO NOT RUN THIS ON A LIVE ACCOUNT!  USE A DEMO ACCOUNT!  YOU WILL LOSE MONEY RUNNING THIS SYSTEM!       #
+#      THIS IS FOR FUNCTIONALITY PROOF OF CONCEPT ONLY. I WILL NOT BE HELD RESPONSIBLE IF YOU LOOSE MONEY.      #
+#                                                                                                               #
+#################################################################################################################
+
+
 import datetime
 from oanda.oanda import Oanda
 from indicators.indicators import Indicator
 from notifier.system_logger import config_logger
 
 
-class RsiTest(Oanda):
+class rsi_test(Oanda):
     def __init__(self, oanda):
         print('-------- RSI Test Stratgey Initialized -----------')
         self.data0 = oanda.DataFeed.data0

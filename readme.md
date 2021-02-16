@@ -38,6 +38,7 @@ sudo pip3 install wheel twilio schedule datetime requests argparse numpy tulipy 
 
 # Check Running processes:
    ps -ef | egrep "python|PID"
+   ps -u eric | egrep "python|PID"
 
 # Kill Running Processes: 
     kill -9 <pid>

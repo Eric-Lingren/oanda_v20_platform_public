@@ -1,8 +1,20 @@
+#################################################################################################################
+#                                                                                                               #
+#   This system DOES execute trades. This is very similar to Backtraders example code documentation.            #
+#   This is used to demonstrate a proof of concept of order excutation within this platform. It simply          #
+#   looks for 2 consecutive rising or falling bars and executaes a position if there are no open positions      #
+#                                                                                                               #
+#          ********************************    WARNING!!!    ********************************                   #
+#       DO NOT RUN THIS ON A LIVE ACCOUNT!  USE A DEMO ACCOUNT!  YOU WILL LOSE MONEY RUNNING THIS SYSTEM!       #
+#      THIS IS FOR FUNCTIONALITY PROOF OF CONCEPT ONLY. I WILL NOT BE HELD RESPONSIBLE IF YOU LOOSE MONEY.      #
+#                                                                                                               #
+#################################################################################################################
+
+import datetime
 from oanda.oanda import Oanda
 from indicators.indicators import Indicator
-import datetime
 
-class SimpleOrderTest(Oanda):
+class simple_order_test(Oanda):
     def __init__(self, oanda):
         print('-------- Simple Test Stratgey Initialized -----------')
         self.data0 = oanda.DataFeed.data0
@@ -31,11 +43,11 @@ class SimpleOrderTest(Oanda):
         matching_trades = self.oanda.Account.find_matching_trades(open_trades, self.pair)
 
         if len(matching_trades) == 0:  # No Existing Position. Evaluate Entry Criteria
-            if bid0 > bid1:  # Prices Rising
+            if bid0 > bid1:  # Prices are Rising
                 self.oanda.Account.Order.buy_market(5000, self.pair)
-            if bid0 < bid1:  # Prices Falling
+            if bid0 < bid1:  # Prices Are Falling
                 self.oanda.Account.Order.sell_market(5000, self.pair)
-        else:  # Position Exists.  Evaluate Exit Criteria.
+        else:  # There is an existing position.  Evaluate Exit Criteria.
             position_value = float(matching_trades[0]['unrealizedPL'])
             if position_value >= self.profit_target or position_value <= self.loss_target:
                 order_id = matching_trades[0]['id']
