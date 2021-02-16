@@ -1,6 +1,6 @@
 # Oanda v20 Platorm Public
 
-This is a fully custom forex robot algorithm library built using the python Backtrader framework with full integration into the Oanda version 20 API schema. I built this platform after dissatsifactory results with other Python/Oanda platforms I was able to find on the market.
+This is a fully custom forex robot algorithm library built using the python Backtrader framework as reference with full integration into the Oanda version 20 API schema. I built this platform after dissatsifactory results with other Python/Oanda platforms I was able to find on the market.
 
 ## General Information:   
 
@@ -30,19 +30,9 @@ Currency pairs passed in must adhere to Oandas v20 schema - capital letters sepe
 
 ## Dependencies:
 
-wheel   
-twilio   
-schedule   
-datetime   
-requests   
-json   
-time   
-argparse   
-numpy   
-tulipy   
-psutil    
+The list of required external 3rd party dependencies is: wheel, twilio, schedule, datetime, requests, json, time, argparse, numpy, tulipy & psutil.    
 
-To Install Dependencies:   
+To install dependencies run:   
 
 ```sudo pip3 install wheel twilio schedule datetime requests argparse numpy tulipy psutil```
 
@@ -50,7 +40,7 @@ To Install Dependencies:
 
 This is a sample repo. As such, everything is fully functional, but this contains no profitable robot algorithms.  You can view the included robot algorithms in the strategies/forex_bots_python folder [here.](https://github.com/Eric-Lingren/oanda_v20_platform_public/tree/master/strategies/forex_bots_python) 
 
-Included is a simple price printer, a basic order execution bot, and a simple RSI execution bot.   
+Included is a simple price printer, a basic order execution bot and a simple RSI execution bot.   
 
 Feel free to use this as a platform for your own usage and development of your own robots or contact me if you have ideas of things you would like to see built.   
 
