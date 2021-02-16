@@ -68,13 +68,11 @@ def run_strategy():
     # KEEPS THE SYSTEM ONLINE INDEFINATELY WHILE MINIMIZING RESOURCE CONSUMPTION:
     while True:
         schedule.run_pending()
-        # time.sleep(1) # Remove if you want to test server overloading
+        time.sleep(1) # Comment this line out if you want to test server overloading and torture testing
 
 
 # INITIALIZES ROBOT AND SCRIPTS 
 try: 
-    # for i in range(3):
-    #     print(3/i)
     if __name__ == '__main__':
         args = parse_args()
         if args.email_to:
