@@ -77,8 +77,29 @@ try:
     #     print(3/i)
     if __name__ == '__main__':
         args = parse_args()
-        email_subject = f'Python Bot Stared --- {args.pair} --- {args.bot}' 
-        email_body = 'System is online'
+        if args.email_to:
+            email_subject = f'Python Bot Stared --- {args.pair} --- {args.bot}' 
+            email_body = 'System is online'
+            send_email_notification(
+                args.gmail_server_account, 
+                args.gmail_server_password, 
+                args.email_to, 
+                email_subject, 
+                email_body
+            )
+        run_strategy()
+
+# GRACEFUL EXIT ON PROGRAM CRASH WITH EMAIL NOTIFICATION OF FAILURE REASON
+except Exception as e:
+    print(e)
+    if args.email_to:
+        args = parse_args()
+        log_stream = StringIO()
+        logging.basicConfig(stream=log_stream, level=logging.INFO)
+        logging.error("Exception occurred", exc_info=True)
+        email_subject = f'Python Bot CRASHED! --- {args.pair} --- {args.bot}'
+        # email_body = log_stream.getvalue()
+        email_body = e
         send_email_notification(
             args.gmail_server_account, 
             args.gmail_server_password, 
@@ -86,22 +107,3 @@ try:
             email_subject, 
             email_body
         )
-        run_strategy()
-
-# GRACEFUL EXIT ON PROGRAM CRASH WITH EMAIL NOTIFICATION OF FAILURE REASON
-except Exception as e:
-    print(e)
-    args = parse_args()
-    log_stream = StringIO()
-    logging.basicConfig(stream=log_stream, level=logging.INFO)
-    logging.error("Exception occurred", exc_info=True)
-    email_subject = f'Python Bot CRASHED! --- {args.pair} --- {args.bot}'
-    # email_body = log_stream.getvalue()
-    email_body = e
-    send_email_notification(
-        args.gmail_server_account, 
-        args.gmail_server_password, 
-        args.email_to, 
-        email_subject, 
-        email_body
-    )

@@ -12,7 +12,7 @@ This is intended to run in a live environment in real time.  If you would like t
 
 You can run this locally or on a deployed linux server.  If you wish to use my server deployement library that works in conjunction with this Oanda platform, [you can view that repo here.](https://github.com/Eric-Lingren/oanda_server_scripts)    
 
-As part of the functionality and high availability intended for trading ecosystems, this platform includes automated email notifications autosent for each up and down occourance of the platform.  If you wish to disable this, you will need to clone the code and disable those features.  This also means you will need to configure a gmail account to use an application password to use for the email sending options if you keep those enabled. There are optional Twilio SMS notifications you can configure as well.
+As part of the functionality and high availability intended for trading ecosystems, this platform includes automated email notifications autosent for each up and down occourance of the platform.  If you wish to enable this, you will need pass those arguments into your startup script.  This also means you will need to configure a gmail account to use an application password to use for the email sending options if you keep those enabled. There are optional Twilio SMS notifications you can configure as well.
 
 If you would like more information about the Oanda API architecture used within this repo or have more questions on obtaining your Oanda tokens and credentials, you can view the full Oanda v20 developer documentation [here](https://developer.oanda.com/rest-live-v20/introduction/)
 
@@ -20,11 +20,9 @@ If you would like more information about the Oanda API architecture used within 
 
 To run the platform in terminal on localhost you can start it up with the following script from the root of the project making sure you substitute varibles for your own:   
 
-```python3 main.py --oanda_account <account-number> --oanda_token <oanda-api-token> --pair <currency-apir> --bot <bot-name> --email_to <reciever-email> --gmail_server_account <gmail-sender-account> --gmail_server_password <gmail-sender-password>```   
+```python3 main.py --oanda_account <account-number> --oanda_token <oanda-api-token> --pair <currency-apir> --bot <bot-name>```   
 
-The arguments listed above are all required for operation but there are optional ones available also.  To view the full list of all arguments the python script will accept, you can check the args.py file contained within the setup folder [here](./setup/args.py)   
-
-If you wish to diable email sending and prevent those argumets from being required to run the scripts, you can simply change the required boolean of the ```email_to```, ```gmail_server_account``` and ```gmail_server_password``` arguments in the file listed above to ```False```.
+The arguments listed above are all required for operation but there are optional ones available also for email and sms notifications.  To view the full list of all arguments the python script will accept, you can check the args.py file contained within the setup folder [here](./setup/args.py)   
 
 Currency pairs passed in must adhere to Oandas v20 schema - capital letters seperated by an underscore. I.E. You must use ```EUR_USD``` rather than ```eur_usd``` or ```eurusd``` or ```EURUSD``` or some other variation. If you would like more information on this, you can view the Oanda Instrument developer docs [here.](https://developer.oanda.com/rest-live-v20/instrument-ep/)     
 
