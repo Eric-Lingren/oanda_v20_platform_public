@@ -1,11 +1,35 @@
-To run the platform in terminal enter:   
+# Oanda v20 Platorm Public
 
-```python3 main.py --account xxx-xxx-xxxxxxx-xxx --token xxxxxxxxxxx-xxxxxxxxxxxxxxx --pair EUR_USD```
+This is a fully custom forex robot algorithm library built using the python Backtrader framework with full integration into the Oanda version 20 API schema. I built this platform after dissatsifactory results with other Python/Oanda platforms I was able to find on the market.
 
+## General Information:   
 
-Setup --
+This contains sample robots which will evalute prices, indicators, and execute orders.   
 
-Dependencies: 
+This can be run with a live or demo Oanda account based upon the arguments you pass into the initilization script.   
+
+This is intended to run in a live environment in real time.  If you would like to view my backtesting version optimized to work with historically loaded daya in hd5, excel, or pandas data frames [you can view this repo here. ](https://github.com/Eric-Lingren/bt_oanda)    
+
+You can run this locally or on a deployed linux server.  If you wish to use my server deployement libary that works in conjunction with this Oanda platform, [you can view that repo here.](https://github.com/Eric-Lingren/oanda_server_scripts)    
+
+As part of the functionality and high availability intended for trading ecosystems, this platform includes automated email notifications autosent for each up and down occourance of the platform.  If you wish to dsiable this, you will need to clone the code and disable those features.  This also means you will need to configure your a gmail acocunt to use an application password to use for the email sending options. There are optional Twilio SMS notifications you can configure as well.
+
+If you would like more information aobut the Oanda API architecture used within this repo or have more questions on obtaining your Oanda tokens and credentials, you can view the full Oanda v20 developer documentation [here](https://developer.oanda.com/rest-live-v20/introduction/)
+
+## Usage:
+
+To run the platform in terminal on localhost you can start it up with the following script from the root of the project making sure you substitute varibles for your own:   
+
+```python3 main.py --oanda_account <account-number> --oanda_token <oanda-api-token> --pair <currency-apir> --bot <bot-name> --email_to <reciever-email> --gmail_server_account <gmail-sender-account> --gmail_server_password <gmail-sender-password>```   
+
+The arguments listed above are all required for operation but there are optional ones available also.  To view the full list of all arguments the python script will accept, you can check the args.py file contained within the setup folder [here](./setup/args.py)   
+
+If you wish to diable email sending and prevent those argumets from being required to run the scripts, you can simply change the required boolean of the ```email_to```, ```gmail_server_account``` and ```gmail_server_password``` arguments in the file listed above to ```False```.
+
+Currency pairs passed in must adhere to Oandas v20 schema - capital letters seperated by an underscore. I.E. You must use ```EUR_USD``` rather than ```eur_usd``` or ```eurusd``` or ```EURUSD``` or some other variation. If you would like more information on this, you can view the Oanda Instrument developer docs [here.](https://developer.oanda.com/rest-live-v20/instrument-ep/)     
+
+## Dependencies:
+
 wheel   
 twilio   
 schedule   
@@ -18,12 +42,23 @@ numpy
 tulipy   
 psutil    
 
+To Install Dependencies:   
 
-Install Dependencies: 
+```sudo pip3 install wheel twilio schedule datetime requests argparse numpy tulipy psutil```
 
-sudo pip3 install wheel twilio schedule datetime requests argparse numpy tulipy psutil
+## Included Robots:
 
-#### Some example method calls for reference:
+This is a sample repo. As such, everything is fully functional, but this contains no profitable robot algorithms.  You can view the included robot algorithms in the strategies/forex_bots_python folder [here.](./strategies/forex_python_bots) 
+
+Included is a simple price printer, a basic order execution bot, and a simple RSI execution bot.   
+
+Feel free to use this as a platform for your own usage and development of your own robots or contact me if you have ideas of things you would like to see built.   
+## Tips:
+
+### Indicators:
+
+All indicators are custom built. If you need more than those included, you will need to build your own into the framweork.
+### Here are some example method calls for reference:
     # print(oanda.Account.get_account())
     # print(oanda.Account.get_account_balance())
     # print(oanda.Account.get_open_positions())
@@ -34,11 +69,17 @@ sudo pip3 install wheel twilio schedule datetime requests argparse numpy tulipy 
     # oanda.Account.Order.sell_market(150, 'EUR_USD')
     # print(oanda.Account.get_open_positions())
     # oanda.DataFeed.stream()
-
-
-## Check Running processes:
+### Check All Running Script Processes on a Linux Server:
 ``` ps -ef | egrep "python|PID" ```   
 ``` ps -u eric | egrep "python|PID" ```
 
-## Kill Running Processes: 
+### Kill Running Script Processes on a Linux Server: 
 ``` kill -9 <pid> ```
+
+## Disclaimer:
+
+_Trading foreign exchange carries a high level of risk, and may not be suitable for all investors. Past performance is not indicative of future results. Leverage can work against you as well as for you. Before deciding to invest in foreign exchange you should carefully consider your investment objectives, level of experience, and risk appetite. The possibility exists that you could sustain a loss of some or all of your initial investment and therefore you should not invest money that you cannot afford to lose. You should be aware of all the risks associated with foreign exchange trading, and seek advice from an independent financial advisor if you have any doubts._   
+\
+_I take no responsibility for any losses or gains you may incur from using my software. I also take no responsibility for any architecture, security, or server configurations._   
+\
+_This software is provided as is. No warranties or guarantees will be provided for its accuracy, completeness, reliablity, or security if used within your own environment._
