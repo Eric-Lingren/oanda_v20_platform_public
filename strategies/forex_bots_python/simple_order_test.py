@@ -1,8 +1,8 @@
 #################################################################################################################
 #                                                                                                               #
 #   This system DOES execute trades. This is very similar to Backtraders example code documentation.            #
-#   This is used to demonstrate a proof of concept of order excutation within this platform. It simply          #
-#   looks for 2 consecutive rising or falling bars and executaes a position if there are no open positions      #
+#   This is used to demonstrate a proof of concept of order execution within this platform. It simply          #
+#   looks for 2 consecutive rising or falling bars and executes a position if there are no open positions      #
 #                                                                                                               #
 #          ********************************    WARNING!!!    ********************************                   #
 #       DO NOT RUN THIS ON A LIVE ACCOUNT!  USE A DEMO ACCOUNT!  YOU WILL LOSE MONEY RUNNING THIS SYSTEM!       #
@@ -16,7 +16,7 @@ from indicators.indicators import Indicator
 
 class simple_order_test(Oanda):
     def __init__(self, oanda):
-        print('-------- Simple Test Stratgey Initialized -----------')
+        print('-------- Simple Test Strategy Initialized -----------')
         self.data0 = oanda.DataFeed.data0
         self.oanda = oanda
         self.pair = oanda.pair

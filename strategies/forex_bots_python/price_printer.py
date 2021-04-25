@@ -2,7 +2,7 @@
 #                                                                                                               #
 #    This system does not execute trades.  It is a very simple barebones algo that plugs into the Oanda API     #
 #   and uses that data to print the current prices of the selected asset and adds some additional indicators    #
-#     Use this for the most rudamentary baseline of how the bots function within the backtrader ecosystem.      #
+#     Use this for the most rudimentary baseline of how the bots function within the backtrader ecosystem.      #
 #                                                                                                               #
 #################################################################################################################
 

@@ -1,12 +1,16 @@
 import argparse
+# import account details
+from auth.auth import Tokens
+t = Tokens()
 
 def parse_args(pargs=None):
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description='Oanda v20 API integration')
 
+    # changed required from T to F for experiments running bot in vscode
     parser.add_argument('--bot', default=None,
-                    required=True, action='store',
+                    required=False, action='store',
                     help='System bot to trade')
 
     # parser.add_argument('--compression', default=1, type=int,
@@ -28,17 +32,20 @@ def parse_args(pargs=None):
     parser.add_argument('--live', default=None,
                         required=False, action='store',
                         help='Go to live server rather than practice')
-    
-    parser.add_argument('--oanda_account', default=None,
-                    required=True, action='store',
+
+    # changed required from T to F for experiments running bot in vscode
+    parser.add_argument('--oanda_account', default=t.account,
+                    required=False, action='store',
                     help='Oanda account identifier to use')
 
-    parser.add_argument('--oanda_token', default=None,
-                        required=True, action='store',
+    # changed required from T to F for experiments running bot in vscode
+    parser.add_argument('--oanda_token', default=t.token,
+                        required=False, action='store',
                         help='Oanda API account access token to use')
-
+                        
+    # changed required from T to F for experiments running bot in vscode
     parser.add_argument('--pair', default=None,
-                        required=True, action='store',
+                        required=False, action='store',
                         help='data 0 into the system')
     
     parser.add_argument('--recipient-number', default=None,

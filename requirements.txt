@@ -1,0 +1,13 @@
+wheel
+twilio
+schedule
+datetime
+requests
+argparse
+numpy
+tulipy
+psutil
+ipykernel
+
+
+
