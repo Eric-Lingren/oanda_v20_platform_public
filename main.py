@@ -51,10 +51,16 @@ def run_strategy():
 
     # IMPORTS THE TRADING STRATEGY DYNAMICALLY BASED UPON THE ROBOT FILE NAME PASSED IN THE ARGS
     # bot_system = getattr(importlib.import_module(args.bot), args.bot)
-    from strategies.forex_bots_python import price_printer
+    # from strategies.forex_bots_python import price_printer
+    from strategies.forex_bots_python import rsi_test
+    # from strategies.forex_bots_python import simple_order_test
 
     # SETS THE BOT TRADING STRATEGY TO RUN WITH OANDA:
-    strategy = price_printer.price_printer(oanda)
+    # strategy = price_printer.price_printer(oanda)
+    strategy = rsi_test.rsi_test(oanda)
+    # strategy = simple_order_test.simple_order_test(oanda)
+
+
 
     # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATGEY): 
     def job():
@@ -75,10 +81,10 @@ def run_strategy():
         schedule.run_pending()
         time.sleep(1) # Comment this line out if you want to test server overloading and torture testing
 
-
-# INITIALIZES ROBOT AND SCRIPTS 
-# try: 
-#     if __name__ == '__main__':
+# %%
+# INITIALIZES ROBOT AND SCRIPTS  
+if __name__ == '__main__':
+    try:
         # args = parse_args()
         # if args.email_to:
         #     email_subject = f'Python Bot Stared --- {args.pair} --- {args.bot}' 
@@ -90,17 +96,17 @@ def run_strategy():
         #         email_subject, 
         #         email_body
         #     )
-# %%
-run_strategy()
+
+        run_strategy()
 
 # GRACEFUL EXIT ON PROGRAM CRASH WITH EMAIL NOTIFICATION OF FAILURE REASON
-# except Exception as e:
-#     print(e)
+    except Exception as e:
+        print(e)
     # if args.email_to:
     #     args = parse_args()
-    #     log_stream = StringIO()
-    #     logging.basicConfig(stream=log_stream, level=logging.INFO)
-    #     logging.error("Exception occurred", exc_info=True)
+        log_stream = StringIO()
+        logging.basicConfig(stream=log_stream, level=logging.INFO)
+        logging.error("Exception occurred", exc_info=True)
     #     email_subject = f'Python Bot CRASHED! --- {args.pair} --- {args.bot}'
     #     # email_body = log_stream.getvalue()
     #     email_body = e

@@ -7,3 +7,5 @@ auth/
 # ingnore pychache
 __pycache__/
 *.pyc
+# ignore the log files
+logs/
