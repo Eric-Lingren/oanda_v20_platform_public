@@ -1,7 +1,7 @@
 #################################################################################################################
 #                                                                                                               #
 #    This system DOES execute trades. This combines the price_printer and simple_order_test strategies.         #
-#    This algo demonstrates how to use the backtrader platfom in conjunction with the Oanda API to build a      #
+#    This algo demonstrates how to use the backtrader platform in conjunction with the Oanda API to build a      #
 #    custom trading robot that executes trades successfully based upon RSI indicator data combined with         #
 #    with three bars of trending prices.                                                                        #
 #                                                                                                               #
@@ -20,7 +20,7 @@ from notifier.system_logger import config_logger
 
 class rsi_test(Oanda):
     def __init__(self, oanda):
-        print('-------- RSI Test Stratgey Initialized -----------')
+        print('-------- RSI Test Strategy Initialized -----------')
         self.data0 = oanda.DataFeed.data0
         self.oanda = oanda
         self.global_logger = config_logger()
@@ -28,7 +28,7 @@ class rsi_test(Oanda):
         self.profit_target = 5
         self.loss_target = -5
         self.set_indicators()
-        self.global_logger.info('-------- RSI Test Stratgey Initialized -----------')
+        self.global_logger.info('-------- RSI Test Strategy Initialized -----------')
 
     def set_indicators(self):
         # self.sma = Indicator().sma(self.data0, period=14, ba='bid', ohlc='c')
@@ -43,8 +43,8 @@ class rsi_test(Oanda):
 
     def __next__(self):
         self.set_indicators()
-        # print('\n--------------- NEXT RAN ---------------\n')
-        self.log('\n--------------- NEXT RAN ---------------')
+        # print('\n--------------- NEXT RUN ---------------\n')
+        self.log('\n--------------- NEXT RUN ---------------')
         self.log(f" BID Close Price: {self.data0[0]['bid']['c']}")
         self.log(f" NEW RSI: {self.rsi[0]}")
         # self.global_logger.info('heres a log test form system')
