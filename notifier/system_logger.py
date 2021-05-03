@@ -1,10 +1,18 @@
 import logging
 import os
+from datetime import datetime
 
 def config_logger():
-    log_name = 'log.txt'
+    # get todays date
+    datestamp = datetime.now().strftime('%Y%m%d')
+    # use append date to logfile name
+    log_name = f'log-{datestamp}.txt'
     path = './logs/'
     log_filename = os.path.join(path, log_name)
+    # create log if it does not exist
+    if not os.path.exists(log_filename):
+            open(log_filename, 'w').close()
+    # set log format
     LOG_FORMAT = '%(levelname)s %(asctime)s - %(message)s'
     logging.basicConfig(filename = log_filename, level=logging.DEBUG, format=LOG_FORMAT)
     logger = logging.getLogger()

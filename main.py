@@ -52,17 +52,17 @@ def run_strategy():
     # IMPORTS THE TRADING STRATEGY DYNAMICALLY BASED UPON THE ROBOT FILE NAME PASSED IN THE ARGS
     # bot_system = getattr(importlib.import_module(args.bot), args.bot)
     # from strategies.forex_bots_python import price_printer
-    from strategies.forex_bots_python import rsi_test
+    from strategies import rsi_test
     # from strategies.forex_bots_python import simple_order_test
 
     # SETS THE BOT TRADING STRATEGY TO RUN WITH OANDA:
     # strategy = price_printer.price_printer(oanda)
-    strategy = rsi_test.rsi_test(oanda)
+    strategy = rsi_test(oanda)
     # strategy = simple_order_test.simple_order_test(oanda)
 
 
 
-    # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATGEY): 
+    # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATEGY): 
     def job():
         # check_sys_usage()   # For localhost hardware performance testing - DigitalOcean does this natively
         first_data_object = oanda.DataFeed.data0[0]
