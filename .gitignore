@@ -9,3 +9,5 @@ __pycache__/
 *.pyc
 # ignore the log files
 logs/
+# vscode
+.vscode/
