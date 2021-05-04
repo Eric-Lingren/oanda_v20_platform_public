@@ -6,7 +6,7 @@ import time
 import schedule
 import importlib
 import subprocess
-from oanda.oanda import Oanda
+from oanda.oanda import Oanda, Account, Order, DataFeed
 from setup.args import parse_args
 from notifier.sms import TwilioSMS
 from notifier.email import send_email_notification
@@ -46,7 +46,7 @@ def run_strategy():
     
 
     # PREPARES BROKER FOR USAGE:
-    oanda = Oanda(**systemkwargs, **twiliokwargs)
+    oanda = Order(**systemkwargs, **twiliokwargs)
 
 
     # IMPORTS THE TRADING STRATEGY DYNAMICALLY BASED UPON THE ROBOT FILE NAME PASSED IN THE ARGS
@@ -65,9 +65,9 @@ def run_strategy():
     # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATEGY): 
     def job():
         # check_sys_usage()   # For localhost hardware performance testing - DigitalOcean does this natively
-        first_data_object = oanda.DataFeed.data0[0]
-        oanda.DataFeed.refresh_data()
-        updated_first_data_object = oanda.DataFeed.data0[0]
+        first_data_object = DataFeed.data0[0]
+        DataFeed.refresh_data()
+        updated_first_data_object = DataFeed.data0[0]
         if first_data_object != updated_first_data_object:
             strategy.__next__()
 
