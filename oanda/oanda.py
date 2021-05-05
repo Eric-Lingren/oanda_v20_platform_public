@@ -202,7 +202,7 @@ class Order(Account):
             print(msg)
             if self.text_notifications:
                 TwilioSMS(self.twilio_sid, self.twilio_token, self.twilio_number, self.recipient_number).send_text(msg)
-            self.logger.info(f"OANDA ORDER SUCCESSFUL - {msg}")
+            self.logger.warning(f"OANDA ORDER SUCCESSFUL - {msg}")
 
 
     def close_trade(self, order_id):

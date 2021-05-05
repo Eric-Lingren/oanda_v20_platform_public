@@ -1,13 +1,11 @@
 # %%
 import os
-# import strategies
 import sys
 import time
 import schedule
 import importlib
 import subprocess
 from datetime import datetime
-from oanda.oanda import DataFeed
 from setup.args import parse_args
 from notifier.sms import TwilioSMS
 from notifier.email import send_email_notification
@@ -19,7 +17,12 @@ from io import StringIO
 from auth.auth import Tokens
 t = Tokens()
 
-# set up logging
+# import config ini 
+import configparser
+config = configparser.ConfigParser()
+config.read('setup/config.ini')
+# %%
+########## set up logging ###########################
 import logging
 # get todays date
 datestamp = datetime.now().strftime('%Y%m%d')
@@ -52,42 +55,45 @@ logger.addHandler(ch)
 # mark the run
 logger.info('Program Started')
 
+####################################################################################
+# %%
 def run_strategy():
-    # args = parse_args()
+    args = parse_args()
 
     # SETS UP BROKER CONFIGURATIONS:
-    # TODO change back to command line inputs
     systemkwargs = dict(
-        token = t.token,  # args.oanda_token,
-        account = t.account, # args.oanda_account,
-        practice = True, # not args.live,
-        pair = 'EUR_USD', # args.pair, 
-        backfill = True,
-        text_notifications = False, # args.recipient_number is not None
-    )
-    # SETS UP SMS NOTIFIER CONFIGURATIONS:
-    twiliokwargs = dict(
-        recipient_number = None, # args.recipient_number,
-        twilio_number = None, # args.twilio_number,
-        twilio_sid = None, # args.twilio_sid,
-        twilio_token = None, # args.twilio_token
-    )
+        token              = t.token, 
+        account            = t.account,
+        practice           = config.getboolean('Account', 'practice', fallback=False), 
+        pair               = args.pair, 
+        backfill           = config.getboolean('Trading', 'backfill', fallback=True),
+        text_notifications = config.getboolean('Twilio', 
+                            'text_notifications', fallback=False), 
+        recipient_number   = config.getint('Twilio', 'recipient_number', fallback=None),
+        twilio_number      = config.getint('Twilio', 
+                            'twilio_number', fallback=None),
+        twilio_sid         = config.get('Twilio', 
+                             'twilio_sid', fallback=None),
+        twilio_token       = config.get('Twilio', 
+                             'twilio_token', fallback=None),
+                        )
 
     # IMPORTS THE TRADING STRATEGY DYNAMICALLY BASED UPON THE ROBOT FILE NAME PASSED IN THE ARGS
-    # bot_system = getattr(importlib.import_module(args.bot), args.bot)
-    # from strategies.forex_bots_python import price_printer
-    from strategies import rsi_test
-    # from strategies.forex_bots_python import simple_order_test
+    bot_system = getattr(importlib.import_module('strategies'), args.bot)
+    # from strategies  import price_printer
+    #from strategies import rsi_test
+    # from strategies import simple_order_test
+
     # SETS THE BOT TRADING STRATEGY TO RUN WITH OANDA:
     # strategy = price_printer.price_printer(oanda)
-    strategy = rsi_test()
+    strategy = bot_system(**systemkwargs)
     # strategy = simple_order_test.simple_order_test(oanda)
-
 
     # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATEGY):
     
     def job():
-        # check_sys_usage()   # For localhost hardware performance testing - DigitalOcean does this natively
+        # For localhost hardware performance testing - DigitalOcean does this natively
+        # check_sys_usage()   
         first_data_object = strategy.data0[0]
         strategy.refresh_data()
         updated_first_data_object = strategy.data0[0]
@@ -102,22 +108,24 @@ def run_strategy():
     # KEEPS THE SYSTEM ONLINE INDEFINITELY WHILE MINIMIZING RESOURCE CONSUMPTION:
     while True:
         schedule.run_pending()
-        time.sleep(1) # Comment this line out if you want to test server overloading and torture testing
+        # Comment this line out if you want to test server overloading and torture testing
+        time.sleep(1) 
+        
 
 # INITIALIZES ROBOT AND SCRIPTS  
 if __name__ == '__main__':
     try:
-        # args = parse_args()
-        # if args.email_to:
-        #     email_subject = f'Python Bot Stared --- {args.pair} --- {args.bot}' 
-        #     email_body = 'System is online'
-        #     send_email_notification(
-        #         args.gmail_server_account, 
-        #         args.gmail_server_password, 
-        #         args.email_to, 
-        #         email_subject, 
-        #         email_body
-        #     )
+        args = parse_args()
+        if config.get('Email', 'email_to', fallback=None):
+            email_subject = f'Python Bot Stared --- {args.pair} --- {args.bot}' 
+            email_body = 'System is online'
+            send_email_notification(
+                config.get('Email','gmail_server_account', fallback=None),
+                config.get('Email','gmail_server_password', fallback=None),
+                config.get('Email', 'email_to', fallback=None), 
+                email_subject, 
+                email_body
+            )
 
         run_strategy()
         
@@ -125,20 +133,18 @@ if __name__ == '__main__':
 # GRACEFUL EXIT ON PROGRAM CRASH WITH EMAIL NOTIFICATION OF FAILURE REASON
     except:
         logger.exception('Failed to run strategy')
-    # if args.email_to:
-    #     args = parse_args()
-        # log_stream = StringIO()
-        # logging.basicConfig(stream=log_stream, level=logging.INFO)
-        # logging.error("Exception occurred", exc_info=True)
-    #     email_subject = f'Python Bot CRASHED! --- {args.pair} --- {args.bot}'
-    #     # email_body = log_stream.getvalue()
-    #     email_body = e
-    #     send_email_notification(
-    #         args.gmail_server_account, 
-    #         args.gmail_server_password, 
-    #         args.email_to, 
-    #         email_subject, 
-    #         email_body
-    #     )
+
+    if config.get('Email', 'email_to', fallback=None):
+        args = parse_args()
+        log_stream = StringIO()
+        email_subject = f'Python Bot STOPPED! --- {args.pair} --- {args.bot}'
+        email_body = log_stream.getvalue()
+        send_email_notification(
+            config.get('Email','gmail_server_account', fallback=None),
+            config.get('Email','gmail_server_password', fallback=None),
+            config.get('Email', 'email_to', fallback=None),  
+            email_subject, 
+            email_body
+        )
     logger.info('Run strategy finished')
 # %%
