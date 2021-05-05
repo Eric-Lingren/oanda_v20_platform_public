@@ -3,23 +3,30 @@ import requests
 import json
 import time
 from notifier.sms import TwilioSMS
-from notifier.system_logger import config_logger
+# from notifier.system_logger import config_logger
+import logging
+
+
 from auth.auth import Tokens
 t = Tokens()
 
-class Oanda(object):
-    """Base class to access account"""
+
+class Base(object):
+    """Base class to access account, and facilitate inheritance of the subclasses"""
+    def __init__(self, **kwargs) -> None: pass
+
+class Oanda(Base):
+    
     def __init__(self, token=t.token, account=t.account, practice=True, pair='EUR_USD', 
                 text_notifications=False, **kwargs):
 
-        super().__init__(**kwargs)
+        super(Oanda, self).__init__(**kwargs)
+        self.logger = logging.getLogger(__name__)
         self.token = token
         self.account = account
         self.practice = practice
         self.pair = pair
         self.text_notifications = text_notifications
-
-        self.global_logger = config_logger()
         self.base_url = self.set_base_url()
         self.headers = self.set_headers()
 
@@ -44,48 +51,55 @@ class Oanda(object):
 class Account(Oanda):
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.account_info = self.get_account()
-        self.account_balance = self.get_account_balance()
-        self.open_positions = self.get_open_positions()
-        self.open_trades = self.get_open_trades()
+        super(Account, self).__init__(**kwargs)
+        self.get_account()
+        self.get_account_balance()
+        
 
-    
     def get_account(self):
         try:
             url = self.base_url + '/v3/accounts/' + self.account
             r = requests.get(url, headers=self.headers)
             data = r.json()
+
             if data:
-                print(f"Account connected ok!")
+                self.logger.info("Account connected ok!")
+                self.account_info = data
             else:
-                self.global_logger.error(f"OANDA API ERROR - Account.get_account - failed to retrieve data ")
-            return data
-
-        except Exception as e:
-            self.global_logger.error(f"OANDA API ERROR - Account.get_account - failed to retrieve data ")
-            print(e.message, e.args) 
+                self.logger.exception(f"OANDA API ERROR - Account.get_account - failed to retrieve data ")
+        except:
+            self.logger.exception(f"OANDA API ERROR - Account.get_account - failed to retrieve data ")
             
-
 
     def get_account_balance(self):
         try:
-            balance = self.account_info['account']['balance']
-            return balance
-        except Exception as e:
-            self.global_logger.error(f"OANDA API ERROR - Account.get_balance - failed to retrieve data ")
-            print(e.message, e.args) 
+            self.account_balance = self.account_info['account']['balance']
+        except:
+            self.logger.exception(f"OANDA API ERROR - Account.get_balance - failed to retrieve data ")
 
     
+
+class Order(Account):
+    def __init__(self, twilio_sid=None, twilio_token=None, 
+                twilio_number=None , recipient_number=None, **kwargs):
+        super(Order, self).__init__(**kwargs)
+        self.order = None
+        self.twilio_sid = twilio_sid
+        self.twilio_token = twilio_token 
+        self.twilio_number = twilio_number 
+        self.recipient_number = recipient_number
+        self.get_open_positions()
+        self.get_open_trades()
+
+
     def get_open_positions(self):
         try:
             url = self.base_url + '/v3/accounts/' + self.account + '/openPositions'
             r = requests.get(url, headers=self.headers)
             data = r.json()
-            return data
-        except Exception as e:
-            self.global_logger.error(f"OANDA API ERROR - Account.get_open_positions failed to get any data")
-            print(e.message, e.args) 
+            self.open_positions = data
+        except:
+            self.logger.exception(f"OANDA API ERROR - Order.get_open_positions failed to get any data")
             
 
     def get_open_trades(self):
@@ -93,30 +107,18 @@ class Account(Oanda):
             url = self.base_url + '/v3/accounts/' + self.account + '/openTrades'
             r = requests.get(url, headers=self.headers)
             data = r.json()
-            return data['trades']
-        except Exception as e:
-            self.global_logger.error(f"OANDA API ERROR - Account.get_open_trades failed to get any data")
-            print(e.message, e.args) 
+            self.open_trades = data # ['trades']
+        except:
+            self.logger.exception(f"OANDA API ERROR - Order.get_open_trades failed to get any data")
 
 
     def find_matching_trades(self):
         new_list = []
-        for item in self.open_trades:
+        for item in self.open_trades['trades']:
             if item['instrument'] == self.pair:
                 new_list.append(item)
         sorted_list = sorted(new_list, key = lambda i: i['id'])
         return sorted_list
-
-
-class Order(Account):
-    def __init__(self, twilio_sid=None, twilio_token=None, 
-                twilio_number=None , recipient_number=None, **kwargs):
-        super().__init__(**kwargs)
-        self.order = None
-        self.twilio_sid = twilio_sid
-        self.twilio_token = twilio_token 
-        self.twilio_number = twilio_number 
-        self.recipient_number = recipient_number
 
 
     def get_orders(self):
@@ -125,9 +127,8 @@ class Order(Account):
             r = requests.get(url, headers=self.headers)
             data = r.json()
             return data
-        except Exception as e:
-            self.global_logger.error(f"OANDA DATA ERROR - Order.get_orders failed to return any orders")
-            print(e.message, e.args) 
+        except:
+            self.logger.exception(f"OANDA DATA ERROR - Order.get_orders failed to return any orders")
 
 
     def get_pending_orders(self):
@@ -136,9 +137,8 @@ class Order(Account):
             r = requests.get(url, headers=self.headers)
             data = r.json()
             return data
-        except Exception as e: 
-            self.global_logger.error(f"OANDA DATA ERROR - Order.get_pending_orders failed to return any pending orders")
-            print(e.message, e.args) 
+        except: 
+            self.logger.exception(f"OANDA DATA ERROR - Order.get_pending_orders failed to return any pending orders")
 
 
     def buy_market(self, units, instrument):
@@ -155,9 +155,8 @@ class Order(Account):
             }
             r = requests.post(url, headers=self.headers, json=data)
             self.notify_order(r.json())
-        except Exception as e:
-            self.global_logger.error(f"OANDA DATA ERROR - Order.buy_market failed to send the order")
-            print(e.message, e.args) 
+        except:
+            self.logger.exception(f"OANDA DATA ERROR - Order.buy_market failed to send the order")
 
 
     def sell_market(self, units, instrument):
@@ -174,9 +173,8 @@ class Order(Account):
             }
             r = requests.post(url, headers=self.headers, json=data)
             self.notify_order(r.json())
-        except Exception as e:
-            self.global_logger.error(f"OANDA DATA ERROR - Order.sell_market failed to send the order")
-            print(e.message, e.args) 
+        except:
+            self.logger.exception(f"OANDA DATA ERROR - Order.sell_market failed to send the order")
             
 
     def notify_order(self, order):
@@ -189,7 +187,8 @@ class Order(Account):
                 TwilioSMS(self.twilio_sid, self.twilio_token, self.twilio_number, 
                             self.recipient_number).send_text(msg)
 
-            self.global_logger.error(f"OANDA ORDER ERROR - {msg}")
+            self.logger.exception(f"OANDA ORDER ERROR - {msg}")
+
         print('\n')
         if 'orderFillTransaction' in self.order:
             time = order["orderFillTransaction"]["time"]
@@ -203,7 +202,7 @@ class Order(Account):
             print(msg)
             if self.text_notifications:
                 TwilioSMS(self.twilio_sid, self.twilio_token, self.twilio_number, self.recipient_number).send_text(msg)
-            self.global_logger.info(f"OANDA ORDER SUCCESSFUL - {msg}")
+            self.logger.info(f"OANDA ORDER SUCCESSFUL - {msg}")
 
 
     def close_trade(self, order_id):
@@ -211,16 +210,14 @@ class Order(Account):
             url = self.base_url + '/v3/accounts/' + self.account + '/trades/' + order_id + '/close'
             r = requests.put(url, headers=self.headers)
             self.notify_order(r.json())
-        except Exception as e:
-            self.global_logger.error(f"OANDA DATA ERROR - Order.close_trade failed to send the order")
-            print(e.message, e.args) 
+        except:
+            self.logger.exception(f"OANDA DATA ERROR - Order.close_trade failed to send the order")
 
 
-
-class DataFeed(Oanda):
+class DataFeed(Order):
 
     def __init__(self, backfill=True, **kwargs):
-        super().__init__(**kwargs)
+        super(DataFeed, self).__init__(**kwargs)
         self.backfill= backfill
         self.data0 = self.set_init_data0()
         self.stream_url = self.set_stream_url()
@@ -236,9 +233,8 @@ class DataFeed(Oanda):
             data = r.json()
             bars = data['candles'][::-1]
             return bars
-        except Exception as e:
-            self.global_logger.error(f"OANDA DATA ERROR - Datastream.set_init_data0 - did not get any data")
-            print(e.message, e.args) 
+        except:
+            self.logger.exception(f"OANDA DATA ERROR - Datastream.set_init_data0 - did not get any data")
 
 
     def rebuild_data(self, latest_bar):
@@ -258,9 +254,9 @@ class DataFeed(Oanda):
             data = r.json()
             latest_bar = data['candles'][::-1][0]
             self.rebuild_data(latest_bar)
-        except Exception as e:
-            self.global_logger.error(f"OANDA DATA ERROR - Datastream.refresh_data - did not get any data")
-            print(e.message, e.args) 
+            self.get_open_trades() 
+        except:
+            self.logger.exception(f"OANDA DATA ERROR - Datastream.refresh_data - did not get any data")
 
 
     def set_stream_url(self): # Does Work, Not currently used.
@@ -278,9 +274,9 @@ class DataFeed(Oanda):
             pre = req.prepare()
             resp = s.send(pre, stream = True, verify = True)
             return resp
-        except Exception as e:
-            print(e.message, e.args) 
-            
+        except:
+            self.logger.exception('Failed to connect to stream') 
+
 
     def stream(self):  # Does Work, Not currently used.
         response = self.connect_to_stream()
@@ -292,8 +288,8 @@ class DataFeed(Oanda):
                 try:
                     line = line.decode('utf-8')
                     msg = json.loads(line)
-                except Exception as e:
-                    print(e.message, e.args) 
+                except:
+                    self.logger.exception('Stream Failed') 
         
                 if "instrument" in msg or "tick" in msg:
                     print('\n' + line)

@@ -1,12 +1,13 @@
 import numpy as np
 import tulipy as ti
 import requests
-from notifier.system_logger import config_logger
+# from notifier.system_logger import config_logger
+import logging
 
 class Indicator:
     def __init__(self):
         self.indicator_base_url = 'http://api.fxhistoricaldata.com/indicators?'
-        self.global_logger = config_logger()
+        self.logger = logging.getLogger(__name__)
 
     def sma(self, data, period, ba, ohlc):
         series_arr = []
@@ -37,4 +38,4 @@ class Indicator:
                 rsi_data.append(rsi_bar[-1])
             return rsi_data
         except:
-            self.global_logger.error('Failed to get RSI Indicator')
+            self.logger.exception('Failed to get RSI Indicator')
