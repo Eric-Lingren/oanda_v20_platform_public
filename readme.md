@@ -19,7 +19,7 @@ class Tokens():
 * added requirements.txt for local environment setup  
 
 
-# Oanda v20 Platform - Public Version - Original Readme from upstream remote
+# Oanda v20 Platform - Public Version - Readme from upstream remote
 
 This is a fully custom forex robot algorithm library built using the python Backtrader framework as reference, with full integration into the Oanda version 20 API schema. I built this platform after dissatisfactory results with other Python/Oanda platforms I was able to find on the market.  Due to this fact, it does not natively support all Oanda API calls you may need for your use case, but it is easily scalable to suit your individual needs.
 
