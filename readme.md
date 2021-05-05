@@ -1,4 +1,24 @@
-# Oanda v20 Platform - Public Version
+# Changes on fork ahead of the upstream remote
+
+* reduced the command line args now only require --bot and --pair  
+* added auth module and class to hold account details  
+  auth/auth.py  
+```python
+class Tokens():
+    def __init__(self):
+        self.account = 'XXX-XXX-XXXXXXXX-XXX'
+        self.token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'  
+```
+* added config.ini file to hold standard args  
+* changed the class inheritance so the kwargs can be passed straight to the bot instance  
+* added import statements to the the strategies __init__ to make bot import simpler  
+* changed the logging to update a file and report to the console  
+* added a datestamp to the log filenames  
+
+* added requirements.txt for local environment setup  
+
+
+# Oanda v20 Platform - Public Version - Original Readme from upstream remote
 
 This is a fully custom forex robot algorithm library built using the python Backtrader framework as reference, with full integration into the Oanda version 20 API schema. I built this platform after dissatisfactory results with other Python/Oanda platforms I was able to find on the market.  Due to this fact, it does not natively support all Oanda API calls you may need for your use case, but it is easily scalable to suit your individual needs.
 
@@ -10,9 +30,9 @@ This can be run with a live or demo Oanda account based upon the arguments you p
 
 This is intended to run in a live environment in real time.  If you would like to view my backtesting version optimized to work with historically loaded data in hd5, excel, or pandas data frames with a full Backtrader integration [you can view the repo for that project here. ](https://github.com/Eric-Lingren/bt_oanda)    
 
-You can run this locally or on a deployed linux server.  If you wish to use my server deployement library that works in conjunction with this Oanda platform, [you can view that repo here.](https://github.com/Eric-Lingren/oanda_server_scripts)    
+You can run this locally or on a deployed linux server.  If you wish to use my server deployment library that works in conjunction with this Oanda platform, [you can view that repo here.](https://github.com/Eric-Lingren/oanda_server_scripts)    
 
-As part of the functionality and high availability intended for trading ecosystems, this platform includes automated email notifications autosent for each up and down occurrence of the platform.  If you wish to enable this, you will need pass those arguments into your startup script.  This also means you will need to configure a gmail account to use an application password to use for the email sending options if you keep those enabled. There are optional Twilio SMS notifications you can configure as well.
+As part of the functionality and high availability intended for trading ecosystems, this platform includes automated email notifications auto sent for each up and down occurrence of the platform.  If you wish to enable this, you will need pass those arguments into your startup script.  This also means you will need to configure a gmail account to use an application password to use for the email sending options if you keep those enabled. There are optional Twilio SMS notifications you can configure as well.
 
 If you would like more information about the Oanda API architecture used within this repo or have more questions on obtaining your Oanda tokens and credentials, you can view the full Oanda v20 developer documentation [here](https://developer.oanda.com/rest-live-v20/introduction/)
 
