@@ -1,7 +1,7 @@
 # Changes on fork ahead of the upstream remote
 
-* reduced the command line args now only require --bot and --pair  
-* added auth module and class to hold account details  
+* reduced the command line args so now only --bot and --pair are needed  
+* added auth module and class (ignored by git) to hold account details - 
   auth/auth.py  
 ```python
 class Tokens():
@@ -11,7 +11,8 @@ class Tokens():
 ```
 * added config.ini file to hold standard args  
 * changed the class inheritance so the kwargs can be passed straight to the bot instance  
-* added import statements to the the strategies __init__ to make bot import simpler  
+* changed the class inheritance so subclasses are nolonger called in the parent class
+* added import statements to the the strategies __init__.py to make bot import simpler  
 * changed the logging to update a file and report to the console  
 * added a datestamp to the log filenames  
 
