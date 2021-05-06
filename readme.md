@@ -10,13 +10,14 @@ class Tokens():
         self.token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'  
 ```
 * added config.ini file to hold standard args  
+* changed the name of setup folder to config so it does not clash with setup.py file
 * changed the class inheritance so the kwargs can be passed straight to the bot instance  
 * changed the class inheritance so subclasses are nolonger called in the parent class
 * added import statements to the the strategies ```__init__.py``` to make bot import simpler  
 * changed the logging to update a file and report to the console  
 * added a datestamp to the log filenames  
-
 * added requirements.txt for local environment setup  
+* directory structure changed for pytest setup
 
 
 # Oanda v20 Platform - Public Version - Readme from upstream remote

@@ -6,16 +6,16 @@
 #                                                                                                               #
 #################################################################################################################
 
-import datetime
-from oanda.oanda import Oanda
+from oanda.oanda import DataFeed
 from indicators.indicators import Indicator
+import logging
+class price_printer(DataFeed):
 
-class price_printer(Oanda):
-    def __init__(self, oanda):
-        self.data0 = oanda.DataFeed.data0
-        self.pair = oanda.pair
-        print('-------- Price Printer Strategy Initialized -----------')
+    def __init__(self, **kwargs):
+        self.logger = logging.getLogger(__name__)
+        # self.data0 = self.set_init_data0()
         self.set_indicators()
+        self.logger.info('\n-------- Price Printer Strategy Initialized -----------')
 
 
     def set_indicators(self):
@@ -24,18 +24,13 @@ class price_printer(Oanda):
         self.rsi = Indicator().rsi(ohlc='close', period=14, pair=self.pair, timeframe='minute', )
 
 
-    def log(self, txt, dt=None):
-        dt = dt or self.data0[0]['time']
-        print(f'{dt} {txt}')
-
-
     def __next__(self):
         self.set_indicators()
-        print('\n--------------------------- NEXT RAN ---------------\n')
-        self.log(f" BID CLOSE: {self.data0[0]['bid']['c']}")
-        self.log(f" ASK CLOSE: {self.data0[0]['ask']['c']}")
-        self.log(f" SMA1: {self.sma1}")
-        self.log(f" RSI: {self.rsi}")
+        print('\n--------------------------- NEXT RUN ---------------\n')
+        self.logger.info(f" BID CLOSE: {self.data0[0]['bid']['c']}")
+        self.logger.info(f" ASK CLOSE: {self.data0[0]['ask']['c']}")
+        self.logger.info(f" SMA1: {self.sma1}")
+        self.logger.info(f" RSI: {self.rsi}")
         print('\n--------------------------- END OF NEXT --------------- \n')
 
 

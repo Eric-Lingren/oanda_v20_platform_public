@@ -8,6 +8,6 @@ numpy
 tulipy
 psutil
 ipykernel
-
+pytest
 
 

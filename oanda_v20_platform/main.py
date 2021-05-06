@@ -6,7 +6,7 @@ import schedule
 import importlib
 import subprocess
 from datetime import datetime
-from setup.args import parse_args
+from config.args import parse_args
 from notifier.sms import TwilioSMS
 from notifier.email import send_email_notification
 from utils.hardware_usage import check_sys_usage
@@ -20,7 +20,7 @@ t = Tokens()
 # import config ini 
 import configparser
 config = configparser.ConfigParser()
-config.read('setup/config.ini')
+config.read('config/config.ini')
 # %%
 ########## set up logging ###########################
 import logging
@@ -38,11 +38,13 @@ if not os.path.exists(log_filename):
 
 # create logger
 logger = logging.getLogger()
+# set minimum output level
 logger.setLevel(logging.DEBUG)
 # Set up the file handler
 file_logger = logging.FileHandler(log_filename)
 # create console handler and set level to debug
 ch = logging.StreamHandler()
+# set minimum output level
 ch.setLevel(logging.INFO)
 # create formatter
 formatter = logging.Formatter('[%(levelname)s] - %(asctime)s - %(name)s : %(message)s')
@@ -80,17 +82,11 @@ def run_strategy():
 
     # IMPORTS THE TRADING STRATEGY DYNAMICALLY BASED UPON THE ROBOT FILE NAME PASSED IN THE ARGS
     bot_system = getattr(importlib.import_module('strategies'), args.bot)
-    # from strategies  import price_printer
-    #from strategies import rsi_test
-    # from strategies import simple_order_test
 
     # SETS THE BOT TRADING STRATEGY TO RUN WITH OANDA:
-    # strategy = price_printer.price_printer(oanda)
     strategy = bot_system(**systemkwargs)
-    # strategy = simple_order_test.simple_order_test(oanda)
 
     # PREPARES AND BUNDLES THE TRADING ACTION JOBS FOR EXECUTION (GET DATA / RUN STRATEGY):
-    
     def job():
         # For localhost hardware performance testing - DigitalOcean does this natively
         # check_sys_usage()   

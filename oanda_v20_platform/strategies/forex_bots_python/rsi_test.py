@@ -12,19 +12,18 @@
 #################################################################################################################
 
 
-import datetime
-from oanda.oanda import Order, DataFeed
+from oanda.oanda import DataFeed
 from indicators.indicators import Indicator
 # from notifier.system_logger import config_logger
 import logging
 
 
-class rsi_test(DataFeed, Order):
+class rsi_test(DataFeed):
     
     def __init__(self, **kwargs):
         super(rsi_test, self).__init__(**kwargs)
         self.logger = logging.getLogger(__name__)
-        self.data0 = self.set_init_data0()
+        # self.data0 = self.set_init_data0()
         self.profit_target = 5
         self.loss_target = -5
         self.set_indicators()

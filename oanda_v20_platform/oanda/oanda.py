@@ -12,13 +12,30 @@ t = Tokens()
 
 
 class Base(object):
-    """Base class to access account, and facilitate inheritance of the subclasses"""
+    """Base class to access account, and facilitate inheritance of the subclasses
+    """
     def __init__(self, **kwargs) -> None: pass
 
 class Oanda(Base):
+    """Sets up access to an Oanda account and the market data stream for the chosen asset 
+    e.g. currency pair or commodity. 
+
+        Args:
+            token (str, required): 
+                The Oanda API token. Defaults to t.token from auth class.
+            account (str, required): 
+                The Oanda account number. Defaults to t.account from auth class.
+            practice (bool, required): 
+                Use the Oanda practice stream or go live with real money. Defaults to True.
+            pair (str, required): 
+                Which asset to trade. Defaults to 'EUR_USD'.
+            text_notifications (bool, optional): 
+                If sms notifications are set up do you want to use them?. Defaults to False.
+        """
     
     def __init__(self, token=t.token, account=t.account, practice=True, pair='EUR_USD', 
                 text_notifications=False, **kwargs):
+        
 
         super(Oanda, self).__init__(**kwargs)
         self.logger = logging.getLogger(__name__)
@@ -49,8 +66,11 @@ class Oanda(Base):
 
 
 class Account(Oanda):
-
+    """Gets the current account status and attributes.
+    Subclass of Oanda.
+    """
     def __init__(self, **kwargs):
+
         super(Account, self).__init__(**kwargs)
         self.get_account()
         self.get_account_balance()
@@ -80,8 +100,22 @@ class Account(Oanda):
     
 
 class Order(Account):
+    """A class to hold details of current open positions, place orders, 
+    check current orders and to notify the user when orders are placed
+
+        Args:
+            twilio_sid (str, optional): 
+                Twilio account details. Defaults to None.
+            twilio_token (str, optional): 
+                Twilio account details. Defaults to None.
+            twilio_number (int, optional): 
+                Twilio account details. Defaults to None.
+            recipient_number (int, optional): 
+                Number to send notifications to. Defaults to None.
+        """
     def __init__(self, twilio_sid=None, twilio_token=None, 
                 twilio_number=None , recipient_number=None, **kwargs):
+        
         super(Order, self).__init__(**kwargs)
         self.order = None
         self.twilio_sid = twilio_sid
@@ -176,7 +210,7 @@ class Order(Account):
         except:
             self.logger.exception(f"OANDA DATA ERROR - Order.sell_market failed to send the order")
             
-
+    # TODO notifies more than once
     def notify_order(self, order):
         self.order = order
         if 'orderCancelTransaction' in self.order:
@@ -215,6 +249,12 @@ class Order(Account):
 
 
 class DataFeed(Order):
+    """Handles the streaming data from Oanda
+
+    Args:
+        backfill (bool, optional):
+            Get the last 500 candles?. Defaults to True.
+    """
 
     def __init__(self, backfill=True, **kwargs):
         super(DataFeed, self).__init__(**kwargs)
@@ -296,5 +336,5 @@ class DataFeed(Order):
 
 if __name__=="__main__":
 
-    test = Oanda()
+    test = DataFeed()
 # %%
