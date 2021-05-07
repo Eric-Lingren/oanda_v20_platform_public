@@ -12,6 +12,7 @@ import logging
 class price_printer(DataFeed):
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.logger = logging.getLogger(__name__)
         # self.data0 = self.set_init_data0()
         self.set_indicators()

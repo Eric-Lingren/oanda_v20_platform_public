@@ -15,6 +15,7 @@ from indicators.indicators import Indicator
 import logging
 class simple_order_test(DataFeed):
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.logger = logging.getLogger(__name__)
         self.logger.info('\n-------- Simple Test Strategy Initialized -----------')
         self.data0 = self.set_init_data0()
