@@ -35,7 +35,6 @@ class simple_order_test(DataFeed):
         bid0 = self.data0[0]['bid']['c']
         bid1 = self.data0[1]['bid']['c']
 
-        open_trades = self.get_open_trades()['trades']
         matching_trades = self.find_matching_trades()
 
         if len(matching_trades) == 0:  # No Existing Position. Evaluate Entry Criteria
