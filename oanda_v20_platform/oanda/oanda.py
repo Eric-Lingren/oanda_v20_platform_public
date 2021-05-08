@@ -14,7 +14,8 @@ t = Tokens()
 class Base(object):
     """Base class to access account, and facilitate inheritance of the subclasses
     """
-    def __init__(self, **kwargs) -> None: pass
+    # TODO test if this base class is still required?
+    def __init__(self, **kwargs): pass
 
 class Oanda(Base):
     """Sets up access to an Oanda account and the market data stream for the chosen asset 
@@ -37,7 +38,7 @@ class Oanda(Base):
                 text_notifications=False, **kwargs):
         
 
-        super(Oanda, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.logger = logging.getLogger(__name__)
         self.token = token
         self.account = account
@@ -71,7 +72,7 @@ class Account(Oanda):
     """
     def __init__(self, **kwargs):
 
-        super(Account, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.get_account()
         self.get_account_balance()
         
@@ -116,7 +117,7 @@ class Order(Account):
     def __init__(self, twilio_sid=None, twilio_token=None, 
                 twilio_number=None , recipient_number=None, **kwargs):
         
-        super(Order, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.order = None
         self.twilio_sid = twilio_sid
         self.twilio_token = twilio_token 
@@ -210,7 +211,6 @@ class Order(Account):
         except:
             self.logger.exception(f"OANDA DATA ERROR - Order.sell_market failed to send the order")
             
-    # TODO notifies more than once
     def notify_order(self, order):
         self.order = order
         if 'orderCancelTransaction' in self.order:
@@ -257,7 +257,7 @@ class DataFeed(Order):
     """
 
     def __init__(self, backfill=True, **kwargs):
-        super(DataFeed, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.backfill= backfill
         self.data0 = self.set_init_data0()
         self.stream_url = self.set_stream_url()
