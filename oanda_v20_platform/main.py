@@ -64,8 +64,8 @@ def run_strategy():
 
     # SETS UP BROKER CONFIGURATIONS:
     systemkwargs = dict(
-        token              = t.token, 
-        account            = t.account,
+        token              = os.getenv('PRACTICE_TOKEN'), 
+        account            = os.getenv('PRACTICE_ACCOUNT'),
         practice           = config.getboolean('Account', 'practice', fallback=False), 
         pair               = args.pair, 
         backfill           = config.getboolean('Trading', 'backfill', fallback=True),

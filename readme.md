@@ -1,14 +1,13 @@
 # Changes on fork ahead of the upstream remote
 
 * reduced the command line args so now only --bot and --pair are needed  
-* added auth module and class (ignored by git) to hold account details - 
-  auth/auth.py  
-```python
-class Tokens():
-    def __init__(self):
-        self.account = 'XXX-XXX-XXXXXXXX-XXX'
-        self.token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'  
+* stored account number and token as environment variables:
 ```
+bash
+export PRACTICE_ACCOUNT=XXX-XXX-XXXXXXXX-XXX
+export PRACTICE_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
+```
+The tokens etc are then accessed via ```os.getenv('PRACTICE_ACCOUNT')```
 * added config.ini file to hold standard args  
 * changed the name of setup folder to config so it does not clash with setup.py file
 * changed the class inheritance so the kwargs can be passed straight to the bot instance  
@@ -18,6 +17,7 @@ class Tokens():
 * added a datestamp to the log filenames  
 * added requirements.txt for local environment setup  
 * directory structure changed for pytest setup
+* added some tests
 
 
 # Oanda v20 Platform - Public Version - Readme from upstream remote
