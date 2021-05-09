@@ -20,9 +20,9 @@ class Oanda(Base):
 
         Args:
             token (str, required): 
-                The Oanda API token. Defaults to t.token from auth class.
+                The Oanda API token. Defaults to env variables.
             account (str, required): 
-                The Oanda account number. Defaults to t.account from auth class.
+                The Oanda account number. Defaults to env variables.
             practice (bool, required): 
                 Use the Oanda practice stream or go live with real money. Defaults to True.
             pair (str, required): 
