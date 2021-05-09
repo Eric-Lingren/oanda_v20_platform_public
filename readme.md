@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/ant358/oanda_v20_platform_public.svg?branch=master)](https://travis-ci.com/ant358/oanda_v20_platform_public)
+[![codecov](https://codecov.io/gh/ant358/oanda_v20_platform_public/branch/master/graph/badge.svg)](https://codecov.io/gh/ant358/oanda_v20_platform_public)
 # Changes on fork ahead of the upstream remote
 
 * reduced the command line args so now only --bot and --pair are needed  
