@@ -2,7 +2,8 @@
 [![codecov](https://codecov.io/gh/ant358/oanda_v20_platform_public/branch/master/graph/badge.svg)](https://codecov.io/gh/ant358/oanda_v20_platform_public)
 # Changes on fork ahead of the upstream remote
 
-* reduced the command line args so now only --bot and --pair are needed  
+* reduced the command line args so now only --bot and --pair are needed    
+  ```python main.py --bot "rsi_test" --pair "EUR_USD"```
 * stored account number and token as environment variables:
 ```
 bash
@@ -13,13 +14,17 @@ The tokens etc are then accessed via ```os.getenv('PRACTICE_ACCOUNT')```
 * added config.ini file to hold standard args  
 * changed the name of setup folder to config so it does not clash with setup.py file
 * changed the class inheritance so the kwargs can be passed straight to the bot instance  
-* changed the class inheritance so subclasses are nolonger called in the parent class
+* changed the class inheritance so subclasses are no longer called in the parent class
 * added import statements to the the strategies ```__init__.py``` to make bot import simpler  
-* changed the logging to update a file and report to the console  
-* added a datestamp to the log filenames  
+* changed the logging to update a file and report to the console with different levels of information  
+  and removed the logging function and added the setup logging script to the start of main.py  
+  so its the first code to run   
+* added a datestamp to the log filenames   
 * added requirements.txt for local environment setup  
 * directory structure changed for pytest setup
 * added some tests
+* added Travis CI and Codecov for build monitoring  
+* added setup.py and an .egg file starting to work towards easy deployment as a package    
 
 
 # Oanda v20 Platform - Public Version - Readme from upstream remote

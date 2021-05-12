@@ -1,4 +1,5 @@
 auth
+logs
 config
 indicators
 notifier

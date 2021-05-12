@@ -4,6 +4,7 @@ import requests
 import json
 import time
 from notifier.sms import TwilioSMS
+from decouple import config
 # from notifier.system_logger import config_logger
 import logging
 
@@ -31,7 +32,7 @@ class Oanda(Base):
                 If sms notifications are set up do you want to use them?. Defaults to False.
         """
     
-    def __init__(self, token=os.getenv('PRACTICE_TOKEN'), account=os.getenv('PRACTICE_ACCOUNT'), practice=True, pair='EUR_USD', 
+    def __init__(self, token=config('PRACTICE_TOKEN'), account=config('PRACTICE_ACCOUNT'), practice=True, pair='EUR_USD', 
                 text_notifications=False, **kwargs):
         
 
