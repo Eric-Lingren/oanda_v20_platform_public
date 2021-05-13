@@ -6,7 +6,7 @@ import pandas as pd
 from pandas import json_normalize
 import sqlalchemy as sq
 import requests
-from oanda_v20_platform.oanda.oanda import Account
+from oanda.oanda import Account # oanda_v20_platform.
 import os.path
 import logging
 
