@@ -1,7 +1,7 @@
 
 import os
 from data.marketdata import MarketData
-md = MarketData(db_path='oanda_v20_platform/data/marketdata.db')
+md = MarketData(db_path='../oanda_v20_platform/data/marketdata.db')
 class TestMarketData():
 
     def test_db_exists(self):

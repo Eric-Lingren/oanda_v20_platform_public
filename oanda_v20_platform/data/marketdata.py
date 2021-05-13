@@ -1,4 +1,4 @@
-# %%
+
 import json 
 import datetime
 import numpy as np
@@ -338,5 +338,3 @@ if __name__=="__main__":
     os.chdir('..')
     market = MarketData()
 
-
-# %%
