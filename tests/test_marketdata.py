@@ -1,15 +1,15 @@
-import os
-from oanda.marketdata import MarketData
-md = MarketData()
 
+import os
+from data.marketdata import MarketData
+md = MarketData(db_path='oanda_v20_platform/data/marketdata.db')
 class TestMarketData():
 
     def test_db_exists(self):
         message = "Marketdata database does not exist"
-        assert os.path.isfile('./oanda_v20_platform/data/marketdata.db'), message
+        assert os.path.isfile(md.db_path), message
 
     def test_get_instruments(self):
-        x = md.instruments
+        x = md.get_instruments()
         message = "MarketData did not collect the instruments form Oanda"
         assert isinstance(x, dict), message
         assert len(x) ==2, message

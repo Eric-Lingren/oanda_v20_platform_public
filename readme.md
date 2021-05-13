@@ -4,13 +4,16 @@
 
 * reduced the command line args so now only --bot and --pair are needed    
   ```python main.py --bot "rsi_test" --pair "EUR_USD"```
-* stored account number and token as environment variables:
+* stored account number and token as environment variables in a file called oanda_v20_platform_public/.env (ignored via .gitignore)
 ```
-bash
-export PRACTICE_ACCOUNT=XXX-XXX-XXXXXXXX-XXX
-export PRACTICE_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
+PRACTICE_ACCOUNT=XXX-XXX-XXXXXXXX-XXX
+PRACTICE_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  
 ```
-The tokens etc are then accessed via ```os.getenv('PRACTICE_ACCOUNT')```
+Then used:
+```pip install python-decouple```
+```from decouple import config```
+```token = config('PRACTICE_TOKEN)```
+
 * added config.ini file to hold standard args  
 * changed the name of setup folder to config so it does not clash with setup.py file
 * changed the class inheritance so the kwargs can be passed straight to the bot instance  
