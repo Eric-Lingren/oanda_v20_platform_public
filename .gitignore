@@ -8,8 +8,11 @@ auth/
 __pycache__/
 *.pyc
 # ignore the log files
-logs/
+# logs/
+*.txt
 # vscode
 .vscode/
-# ignore
+# drawings
+*.drawio
+# ingnore local environment settings
 .env

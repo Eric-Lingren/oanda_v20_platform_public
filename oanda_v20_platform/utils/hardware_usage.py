@@ -1,7 +1,16 @@
+# %%
 import psutil
+import logging
+logger = logging.getLogger(__name__)
 
-def check_sys_usage():
+def check_cpu_usage():
     cpu_usage = psutil.cpu_percent()
-    print(f'cpu usage is: {cpu_usage}')
+    logger.info(f'cpu usage is: {cpu_usage}')
+    return cpu_usage
+
+def check_memory_usage():
     memory_usage = psutil.virtual_memory().percent
-    print(f'memory usage is: {memory_usage}')
+    logger.info(f'memory usage is: {memory_usage}')
+    return memory_usage
+    
+# %%

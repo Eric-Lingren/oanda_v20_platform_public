@@ -9,5 +9,8 @@ tulipy
 psutil
 ipykernel
 pytest
+python-decouple
+pandas 
+sqlalchemy
 
 
