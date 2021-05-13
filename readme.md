@@ -1,6 +1,32 @@
 [![Build Status](https://travis-ci.com/ant358/oanda_v20_platform_public.svg?branch=master)](https://travis-ci.com/ant358/oanda_v20_platform_public)
 [![codecov](https://codecov.io/gh/ant358/oanda_v20_platform_public/branch/master/graph/badge.svg)](https://codecov.io/gh/ant358/oanda_v20_platform_public)
-# Changes on fork ahead of the upstream remote
+# Automated Trading Platform that runs on Oanda  
+
+## Changes on fork ahead of the upstream remote  
+
+* added the marketdata.py module and database to collect and store market data for use developing and running trading strategies.  
+  
+    DB Browser https://sqlitebrowser.org/ can be used for easy viewing and querying of the database.  Focused on daily data it incudes a table for every tradable instrument with:
+    * The Last 60 days of data
+    * Yesterdays Volume, Open, High, Low, and Close
+    * The 55 day Vol, O, H, L, C
+    * The 20 day Vol, O, H, L, C
+    * The 10 day Vol, O, H, L, C
+    * True Range for each day - a volatility measure that captures gaps
+    * N the 20 day average True Range - like ATR(20)
+
+    And a summary table of market data (called marketdata) useful for trading effectively, 
+    It includes the following information:
+    * Trading costs such as financing rates and the days they are applied.
+    * Pip positions (decimal points) for each instrument 
+    * Margin rates
+    * Max and Min Trailing stop distances
+    * Maximum order sizes
+    * The average spread
+    * The volatility (as N)
+    * The spread percentage of N - enabling the selection of a trading range where trade costs are minimised.  
+    * The N per 100X spread provides a quick way to get the target trading range where the spread cost will be ~1% 
+    * The asset class and base currency
 
 * reduced the command line args so now only --bot and --pair are needed    
   ```python main.py --bot "rsi_test" --pair "EUR_USD"```
