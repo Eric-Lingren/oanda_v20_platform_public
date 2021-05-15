@@ -1,4 +1,3 @@
-from oanda_v20_platform.utils.fileops import get_abs_path
 from config import args
 import argparse
 import configparser

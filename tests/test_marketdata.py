@@ -1,6 +1,6 @@
 
 import os
-from oanda_v20_platform.data.marketdata import MarketData
+from data.marketdata import MarketData
 # TODO breaks when running on CI - need to remove the ../
 md = MarketData()
 class TestMarketData():
