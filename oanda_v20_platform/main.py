@@ -1,7 +1,7 @@
 ########## set up logging ###########################
 import logging
 from datetime import datetime
-from oanda_v20_platform.data.marketdata import MarketData
+from data.marketdata import MarketData
 import os
 from utils.fileops import get_abs_path
 

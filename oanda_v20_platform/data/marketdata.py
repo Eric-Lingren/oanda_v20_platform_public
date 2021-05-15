@@ -1,7 +1,6 @@
 
 import json 
 import datetime
-from oanda_v20_platform.utils.fileops import get_abs_path
 import numpy as np
 import pandas as pd 
 from pandas import json_normalize
