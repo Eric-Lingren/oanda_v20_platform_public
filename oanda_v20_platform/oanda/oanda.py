@@ -5,7 +5,6 @@ import json
 import time
 from notifier.sms import TwilioSMS
 from decouple import config
-# from notifier.system_logger import config_logger
 import logging
 
 
@@ -283,6 +282,7 @@ class DataFeed(Order):
             if len(self.data0) > 500 :  # Only keeps the last 500 bars in memory
                 self.data0.pop()
 
+
     def refresh_data(self):
         try:
             url = self.base_url + '/v3/instruments/' + self.pair + '/candles?count=1&price=BA'
@@ -297,14 +297,18 @@ class DataFeed(Order):
             self.logger.exception(f"OANDA DATA ERROR - Datastream.refresh_data - did not get any data")
 
 
-    def set_stream_url(self): # Does Work, Not currently used.
+    def set_stream_url(self): 
+        """Set the stream url based on use of the practice or live stream account"""
         if self.practice:
             return 'https://stream-fxpractice.oanda.com/v3/accounts/' + self.account + "/pricing/stream"
         else:
             return 'https://stream-fxtrade.oanda.com/v3/accounts/' + self.account + "/pricing/stream"
 
     
-    def connect_to_stream(self): # Does Work, Not currently used.
+    def connect_to_stream(self):
+        """
+        Gets the stream response 
+        """
         try:
             s = requests.Session()
             params = {'instruments' : self.pair}
@@ -316,12 +320,22 @@ class DataFeed(Order):
             self.logger.exception('Failed to connect to stream') 
 
 
-    def stream(self):  # Does Work, Not currently used.
+    def stream(self): 
+        """Handles the full stream json e.g.
+            {"type":"PRICE",
+            "time":"2021-05-13T22:00:43.020656828Z",
+            "bids":[{"price":"1.20804","liquidity":10000000}],
+            "asks":[{"price":"1.20828","liquidity":10000000}],
+            "closeoutBid":"1.20804","closeoutAsk":"1.20828",
+            "status":"tradeable",
+            "tradeable":true,
+            "instrument":"EUR_USD"}
+        """
         response = self.connect_to_stream()
         print(response.status_code)
         if response.status_code != 200:
-            return None
-        for line in response.iter_lines(1):
+            self.logger.debug("Bid stream bad response status {}".format(response.status))
+        for line in response.iter_lines():
             if line:
                 try:
                     line = line.decode('utf-8')
@@ -330,7 +344,54 @@ class DataFeed(Order):
                     self.logger.exception('Stream Failed') 
         
                 if "instrument" in msg or "tick" in msg:
-                    print('\n' + line)
+                    # print('\n' + line)
+                    self.full_stream = msg
+
+
+    def bid_stream(self):
+        """Extracts the current bid price from the connected stream
+        Updates instance.bid as a float value, which can then be used by
+        trading bots to monitor price
+        """
+        response = self.connect_to_stream()
+        # print(response.status_code)
+        if response.status_code != 200:
+            self.logger.debug("Bid stream bad response status {}".format(response.status))
+        for line in response.iter_lines():
+            if line:
+                try:
+                    line = line.decode('utf-8')
+                    msg = json.loads(line)
+                
+                except:
+                    self.logger.exception('Stream Failed') 
+
+                if 'bids' in msg:
+                    self.bid = float(msg['bids'][0]['price'])
+
+
+    def ask_stream(self):
+        """Extracts the current ask price from the connected stream
+        Updates instance.ask as a float value, which can then be used by
+        trading bots to monitor price
+        """
+        response = self.connect_to_stream()
+        # print(response.status_code)
+        if response.status_code != 200:
+            self.logger.debug("Bid stream bad response status {}".format(response.status))
+        for line in response.iter_lines():
+            if line:
+                try:
+                    line = line.decode('utf-8')
+                    msg = json.loads(line)
+                
+                except:
+                    self.logger.exception('Stream Failed') 
+
+                if 'asks' in msg:
+                    self.ask = float(msg['asks'][0]['price'])
+
+
 
 if __name__=="__main__":
 

@@ -2,7 +2,7 @@
 import os
 from data.marketdata import MarketData
 # TODO breaks when running on CI - need to remove the ../
-md = MarketData(db_path='../oanda_v20_platform/data/marketdata.db')
+md = MarketData()
 class TestMarketData():
 
     def test_db_exists(self):

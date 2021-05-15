@@ -1,20 +1,23 @@
 ########## set up logging ###########################
 import logging
 from datetime import datetime
+from oanda_v20_platform.data.marketdata import MarketData
 import os
+from utils.fileops import get_abs_path
 
 from decouple import Config
 # get todays date
 datestamp = datetime.now().strftime('%Y%m%d')
 
-# use append date to logfile name
+# append date to logfile name
 log_name = f'log-{datestamp}.txt'
-path = './logs/'
-log_filename = os.path.join(path, log_name)
-
+# path = './logs/'
+log_filename = get_abs_path(['oanda_v20_platform', 'logs', log_name])
+print(log_filename)
 # create log if it does not exist
-if not os.path.exists(log_filename):
-        open(log_filename, 'w').close()
+# if not log_filename.exists():
+log_filename.touch(exist_ok=True)
+
 
 # create logger
 logger = logging.getLogger()
@@ -57,6 +60,7 @@ try:
     from notifier.sms import TwilioSMS
     from notifier.email import send_email_notification
     from utils.hardware_usage import check_memory_usage, check_cpu_usage
+    from data.marketdata import MarketData
 except:
     logger.exception('Failed to import local modules, have the paths been changed?')
 
@@ -64,9 +68,10 @@ try:
     # import config ini 
     import configparser
     config_local = configparser.ConfigParser()
-    config_local.read('config/config.ini')
+    config_local.read(get_abs_path(['oanda_v20_platform', 'config', 'config.ini']))
 except:
     logger.exception('Failed to import config file, has it been moved or edited?')
+
 
 
 def run_strategy():
@@ -124,6 +129,15 @@ def run_strategy():
 
 # INITIALIZES ROBOT AND SCRIPTS  
 if __name__ == '__main__':
+    
+    #################################################################################
+    # update market data 
+    try:
+        md = MarketData()
+    except:
+        logger.exception("Failed to update market data")
+
+
     try:
         args = parse_args()
         if config.get('Email', 'email_to', fallback=None):

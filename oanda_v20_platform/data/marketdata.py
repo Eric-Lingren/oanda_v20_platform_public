@@ -1,6 +1,7 @@
 
 import json 
 import datetime
+from oanda_v20_platform.utils.fileops import get_abs_path
 import numpy as np
 import pandas as pd 
 from pandas import json_normalize
@@ -9,6 +10,7 @@ import requests
 from oanda.oanda import Account # oanda_v20_platform.
 import os.path
 import logging
+from utils.fileops import get_abs_path 
 
 
 # TODO add updated to the database and have a check to update each day
@@ -52,34 +54,53 @@ class MarketData(Account):
         db_path str, default='data/marketdata.db': 
             The path to the database from the directory where this class is being run.
     """
-    def __init__(self, db_path='data/marketdata.db', **kwargs):
+    def __init__(self, db_path=get_abs_path(['oanda_v20_platform','data', 'marketdata.db']), **kwargs):
         super().__init__(**kwargs)
         self.logger = logging.getLogger(__name__)
         # setup connection to the database
         self.db_path=db_path
         self.engine = sq.create_engine(f'sqlite:///{self.db_path}')
+
         # does the db exist if not create it by connecting
         if not os.path.isfile(self.db_path):
             conn =  self.engine.connect()
             conn.execute("commit")
             conn.close()
-            self.logger.info(f"MarketData database created at: {self.db_path}")
-        
-#         # get a list of available instruments and relevent data
-#         self.core = pd.read_sql_table('core', con=self.engine)
-#         self.core_list = self.core['Instrument'].to_list()
-#         self.core_list.remove('USDX')
+            self.logger.info(f"Empty MarketData database created at: {self.db_path}")
 
         # get todays date
         self.today = datetime.datetime.now().strftime('%Y-%m-%d')
-        # do we need to update marketdata?
-        sql = """SELECT DISTINCT(Updated) FROM marketdata;"""
-        data_date= pd.read_sql_query(sql, con=self.engine)
+        
+        try: # do we need to update marketdata?
+            sql = """SELECT DISTINCT(Updated) FROM marketdata;"""
+            data_date= pd.read_sql_query(sql, con=self.engine)
 
+        except: # only an empty db exists - build db
+            self.instruments = self.get_instruments()
+            self.build_db()
+            self.logger.info("Market data added to the database")
+
+        # is marketdata out of date?
         if data_date.loc[0].item() != self.today:
             self.instruments = self.get_instruments()
             self.build_db()
             self.logger.info("Market data updated in the database")
+        
+        else: # get the marketdata
+            df = pd.read_sql_query(sql="""SELECT name, type, marginRate, N, avgSpread, 
+                                                "financing.longRate", "financing.shortRate",
+                                                "Spread % N"
+                                            FROM marketdata """,
+                                            con=self.engine)
+                        
+            self.marketdata = df[['name', 'type', 'marginRate', 'N', 'avgSpread', 
+                                 'financing.longRate', 'financing.shortRate',
+                                 'Spread % N']].sort_values(by='Spread % N')
+
+    def get_core_assets(self):
+        pass
+        self.core = pd.read_sql_query(sql="""SELECT DISTINCT Base Currency, Asset FROM marketdata""", con=self.engine)
+        self.core_list = self.core['Instrument'].to_list()
 
 
     def build_db(self):
@@ -136,10 +157,7 @@ class MarketData(Account):
             df['Updated'] = self.today
             
             df.to_sql('marketdata', con=self.engine, if_exists='replace')
-            
-            # self.marketdata = df[['name', 'type', 'marginRate', 'N', 'avgSpread', 
-            #                     'financing.longRate', 'financing.shortRate',
-            #                     'Spread % N']].sort_values(by='Spread % N')
+
        
     
     def base(self, x):
