@@ -13,10 +13,13 @@ datestamp = datetime.now().strftime('%Y%m%d')
 log_name = f'log-{datestamp}.txt'
 # path = './logs/'
 log_filename = get_abs_path(['oanda_v20_platform', 'logs', log_name])
-print(log_filename)
+# print(log_filename)
 # create log if it does not exist
-# if not log_filename.exists():
-log_filename.touch(exist_ok=True)
+if not log_filename.exists():
+    # check the  logs dir exists - create it
+    get_abs_path(['oanda_v20_platform', 'logs']).mkdir(exist_ok=True)
+    # create the file
+    log_filename.touch(exist_ok=True)
 
 
 # create logger
@@ -140,13 +143,13 @@ if __name__ == '__main__':
 
     try:
         args = parse_args()
-        if config.get('Email', 'email_to', fallback=None):
+        if config_local.get('Email', 'email_to', fallback=None):
             email_subject = f'Python Bot Stared --- {args.pair} --- {args.bot}' 
             email_body = 'System is online'
             send_email_notification(
-                config.get('Email','gmail_server_account', fallback=None),
-                config.get('Email','gmail_server_password', fallback=None),
-                config.get('Email', 'email_to', fallback=None), 
+                config_local.get('Email','gmail_server_account', fallback=None),
+                config_local.get('Email','gmail_server_password', fallback=None),
+                config_local.get('Email', 'email_to', fallback=None), 
                 email_subject, 
                 email_body
             )
@@ -158,15 +161,15 @@ if __name__ == '__main__':
     except:
         logger.exception('Failed to run strategy')
 
-    if config.get('Email', 'email_to', fallback=None):
+    if config_local.get('Email', 'email_to', fallback=None):
         args = parse_args()
         log_stream = StringIO()
         email_subject = f'Python Bot STOPPED! --- {args.pair} --- {args.bot}'
         email_body = log_stream.getvalue()
         send_email_notification(
-            config.get('Email','gmail_server_account', fallback=None),
-            config.get('Email','gmail_server_password', fallback=None),
-            config.get('Email', 'email_to', fallback=None),  
+            config_local.get('Email','gmail_server_account', fallback=None),
+            config_local.get('Email','gmail_server_password', fallback=None),
+            config_local.get('Email', 'email_to', fallback=None),  
             email_subject, 
             email_body
         )
