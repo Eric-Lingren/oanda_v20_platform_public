@@ -101,7 +101,6 @@ Included is a simple price printer, a basic order execution bot and a simple RSI
 Feel free to use this as a platform for your own usage and development of your own robots or contact me if you have ideas of things you would like to see built.   
 
 **None of these bots are profitable! They are for demonstration purposes only. I will not be responsible if you run them on a live account.**
-## Tips:
 
 ### Indicators:
 
