@@ -1,2 +1,18 @@
 /__config__.py
 /.DS_Store
+# local environment
+oanda-platform/
+# ignore account details
+auth/
+# ingnore pychache
+__pycache__/
+*.pyc
+# ignore the log files
+# logs/
+*.txt
+# vscode
+.vscode/
+# drawings
+*.drawio
+# ingnore local environment settings
+.env
